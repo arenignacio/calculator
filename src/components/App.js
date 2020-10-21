@@ -4,8 +4,8 @@ import Calculate from './Calculate';
 
 function App(props) {
 	return (
-		<div>
-			App
+		<div className="container border border-dark">
+			<h5 className="pt-2">Calculator - Aren I.</h5>
 			<View />
 			<Calculate text={'Hello!'} performCalc={'test!!'} />
 		</div>
