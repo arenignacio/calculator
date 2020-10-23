@@ -1,16 +1,18 @@
+import './Text.scss';
 import React, { useState } from 'react';
 
 function View(props) {
-	useState(0);
+	//useState just entered as part of learning process for hooks
+	const [equation] = useState(0);
 
 	return (
 		<div className="d-flex flex-column justify-content-end border rounded pr-3 py-1">
-			<span className="d-flex flex-row justify-content-end">
-				<strong>{'Final answer goes here'}</strong>
+			<span className="d-flex flex-row justify-content-end fs-xl">
+				<strong>{'123'}</strong>
 			</span>
-			<var className="d-flex flex-row justify-content-end">
+			<div className="equation d-flex flex-row justify-content-end text-black-50 font-weight-bold ls-1">
 				{'Solution goes here'}
-			</var>
+			</div>
 		</div>
 	);
 }
