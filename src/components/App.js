@@ -1,5 +1,6 @@
 import React from 'react';
 import View from './View';
+import Keypad from './Keypad';
 import toPostfix from './infixToPostfix';
 import calculate from './calcPostfix';
 
@@ -14,7 +15,8 @@ function App(props) {
 		<div className="container border border-dark">
 			<h5 className="pt-2">Calculator - Aren I.</h5>
 			<View />
-			<Calculate />
+			<br />
+			<Keypad />
 		</div>
 	);
 }
