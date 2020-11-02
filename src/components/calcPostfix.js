@@ -27,13 +27,11 @@ const calculate = (postFixStr) => {
 				);
 				i = 0;
 			} else if (postFixArr[i] === '/' && !isNaN(postFixArr[i - 2])) {
-				postFixArr[i - 1] === '0'
-					? postFixArr.splice(i - 2, 3, 0)
-					: postFixArr.splice(
-							i - 2,
-							3,
-							Number(postFixArr[i - 2]) / Number(postFixArr[i - 1])
-					  );
+				postFixArr.splice(
+					i - 2,
+					3,
+					Number(postFixArr[i - 2]) / Number(postFixArr[i - 1])
+				);
 				i = 0;
 			} else if (postFixArr[i] === '^' && !isNaN(postFixArr[i - 2])) {
 				postFixArr.splice(
