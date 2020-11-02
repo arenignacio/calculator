@@ -6,7 +6,7 @@ function View(props) {
 	const [equation] = useState(0);
 
 	return (
-		<div className="d-flex flex-column justify-content-end border rounded pr-3 py-1">
+		<div className="d-flex flex-column justify-content-end border rounded pr-3 py-1 ml-3 mr-3">
 			<span className="d-flex flex-row justify-content-end fs-xl">
 				<strong>{'123'}</strong>
 			</span>
