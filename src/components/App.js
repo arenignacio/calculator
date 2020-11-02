@@ -12,7 +12,7 @@ TODO:
 
 function App(props) {
 	return (
-		<div className="container border border-dark">
+		<div className="container border border-dark mt-2">
 			<h5 className="pt-2">Calculator - Aren I.</h5>
 			<View />
 			<br />

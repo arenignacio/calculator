@@ -24,9 +24,16 @@ class Keypad extends React.Component {
 				</div>
 				<div className="row  justify-content-center">
 					{' '}
-					<Btn name="1/x" />
-					<Btn name="x^2" />
-					<Btn name="sqrt" />
+					<Btn name="%" />
+					<Btn name="CE" />
+					<Btn name="C" />
+					<Btn name="DEL" />
+				</div>
+				<div className="row  justify-content-center">
+					{' '}
+					<Btn name="^" />
+					<Btn name="(" />
+					<Btn name=")" />
 					<Btn name="/" />
 				</div>
 				<div className="row  justify-content-center">
