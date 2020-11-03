@@ -1,5 +1,4 @@
 import React from 'react';
-import './Text.scss';
 
 class Btn extends React.Component {
 	constructor(props) {
@@ -8,13 +7,15 @@ class Btn extends React.Component {
 
 	render() {
 		return (
-			<div
+			<input
+				type="button"
 				className={`border border-black rounded p-2 m-2 col-${
 					this.props.size || 2
-				} text-center`}
-			>
-				{this.props.name}
-			</div>
+				} text-center btn btn-outline-${this.props.type} unselectable ${
+					this.props.addstyle
+				}`}
+				value={this.props.name}
+			/>
 		);
 	}
 }

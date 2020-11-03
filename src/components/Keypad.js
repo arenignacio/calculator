@@ -1,6 +1,7 @@
 import React from 'react';
 import Btn from './Btn';
-import './Text.scss';
+
+/* memory buttons disabled */
 
 class Keypad extends React.Component {
 	constructor(props) {
@@ -15,55 +16,55 @@ class Keypad extends React.Component {
 			<div className="container m-2 mb-4">
 				<div className="row  justify-content-center">
 					{' '}
-					<Btn name="mc" size="1" />
-					<Btn name="mr" size="1" />
-					<Btn name="m+" size="1" />
-					<Btn name="m-" size="1" />
-					<Btn name="ms" size="1" />
-					<Btn name="m^" size="1" />
+					<Btn name="mc" size="1" type="dark" addstyle="disabled" />
+					<Btn name="mr" size="1" type="dark" addstyle="disabled" />
+					<Btn name="m+" size="1" type="dark" addstyle="disabled" />
+					<Btn name="m-" size="1" type="dark" addstyle="disabled" />
+					<Btn name="ms" size="1" type="dark" addstyle="disabled" />
+					<Btn name="m^" size="1" type="dark" addstyle="disabled" />
 				</div>
 				<div className="row  justify-content-center">
 					{' '}
-					<Btn name="%" />
-					<Btn name="CE" />
-					<Btn name="C" />
-					<Btn name="DEL" />
+					<Btn name="%" type="secondary" />
+					<Btn name="CE" type="primary" addstyle="font-weight-bold" />
+					<Btn name="C" type="primary" addstyle="font-weight-bold" />
+					<Btn name="DEL" type="danger" addstyle="font-weight-bold" />
 				</div>
 				<div className="row  justify-content-center">
 					{' '}
-					<Btn name="^" />
-					<Btn name="(" />
-					<Btn name=")" />
-					<Btn name="/" />
+					<Btn name="^" type="secondary" />
+					<Btn name="(" type="secondary" />
+					<Btn name=")" type="secondary" />
+					<Btn name="/" type="secondary" />
 				</div>
 				<div className="row  justify-content-center">
 					{' '}
-					<Btn name="7" />
-					<Btn name="8" />
-					<Btn name="9" />
-					<Btn name="x" />
+					<Btn name="7" addstyle="btn-light" />
+					<Btn name="8" addstyle="btn-light" />
+					<Btn name="9" addstyle="btn-light" />
+					<Btn name="x" type="secondary" />
 				</div>
 
 				<div className="row  justify-content-center">
 					{' '}
-					<Btn name="4" />
-					<Btn name="5" />
-					<Btn name="6" />
-					<Btn name="-" />
+					<Btn name="4" addstyle="btn-light" />
+					<Btn name="5" addstyle="btn-light" />
+					<Btn name="6" addstyle="btn-light" />
+					<Btn name="-" type="secondary" />
 				</div>
 				<div className="row  justify-content-center">
 					{' '}
-					<Btn name="1" />
-					<Btn name="2" />
-					<Btn name="3" />
-					<Btn name="+" />
+					<Btn name="1" addstyle="btn-light" />
+					<Btn name="2" addstyle="btn-light" />
+					<Btn name="3" addstyle="btn-light" />
+					<Btn name="+" type="secondary" />
 				</div>
 				<div className="row  justify-content-center">
 					{' '}
-					<Btn name="plus/minus" />
-					<Btn name="0" />
-					<Btn name="." />
-					<Btn name="=" />
+					<Btn name="plus/minus" type="secondary" />
+					<Btn name="0" addstyle="btn-light" />
+					<Btn name="." type="secondary" />
+					<Btn name="=" type="secondary" />
 				</div>
 			</div>
 		);
