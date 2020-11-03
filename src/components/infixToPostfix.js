@@ -1,3 +1,5 @@
+import getPrecedence from './getPrecedence';
+
 //.converts string of infix to postfix.
 const infixToPostfix = function (input) {
 	let result = '';
@@ -30,25 +32,6 @@ const infixToPostfix = function (input) {
 	//get top of stack or (last element of stack array)
 	const topOfStack = () => {
 		return stack[stack.length - 1];
-	};
-
-	//evaluates level of symbol
-	const getPrecedence = function (symbol) {
-		switch (symbol) {
-			case '^':
-				return 5;
-			case '*':
-			case '/':
-			case '~':
-				return 4;
-			case '+':
-			case '-':
-				return 3;
-			case '(':
-				return 2;
-			case '=':
-				return 1;
-		}
 	};
 
 	//#validator
