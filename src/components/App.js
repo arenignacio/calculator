@@ -1,9 +1,10 @@
 import React from 'react';
 import View from './View';
 import Keypad from './Keypad';
-import '../index.scss';
 import toPostfix from './infixToPostfix';
 import calculate from './calcPostfix';
+
+import '../index.scss';
 
 /* 
 TODO:

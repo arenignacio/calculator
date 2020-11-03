@@ -3,7 +3,7 @@ const calculate = (postFixStr) => {
 	//split postfix using spaces in between.
 	let postFixArr = postFixStr.split(' ');
 
-	if (postFixStr != 'invalid entry') {
+	if (postFixStr !== 'invalid entry') {
 		for (let i = 0; i <= postFixArr.length - 1; ) {
 			if (postFixArr[i] === '+' && !isNaN(postFixArr[i - 2])) {
 				postFixArr.splice(

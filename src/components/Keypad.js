@@ -14,7 +14,7 @@ class Keypad extends React.Component {
 	render() {
 		return (
 			<div className="container m-2 mb-4">
-				<div className="row  justify-content-center">
+				<div className="row  justify-content-center keygrp-mem">
 					{' '}
 					<Btn name="mc" size="1" type="dark" addstyle="disabled" />
 					<Btn name="mr" size="1" type="dark" addstyle="disabled" />
@@ -28,7 +28,12 @@ class Keypad extends React.Component {
 					<Btn name="%" type="secondary" />
 					<Btn name="CE" type="primary" addstyle="font-weight-bold" />
 					<Btn name="C" type="primary" addstyle="font-weight-bold" />
-					<Btn name="DEL" type="danger" addstyle="font-weight-bold" />
+					<Btn
+						name="DEL"
+						type="danger"
+						addstyle="font-weight-bold"
+						id="del"
+					/>
 				</div>
 				<div className="row  justify-content-center">
 					{' '}
@@ -61,7 +66,7 @@ class Keypad extends React.Component {
 				</div>
 				<div className="row  justify-content-center">
 					{' '}
-					<Btn name="plus/minus" type="secondary" />
+					<Btn name="+/-" type="secondary" />
 					<Btn name="0" addstyle="btn-light" />
 					<Btn name="." type="secondary" />
 					<Btn name="=" type="secondary" />
