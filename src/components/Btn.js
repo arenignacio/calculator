@@ -1,6 +1,12 @@
 import React from 'react';
 
 class Btn extends React.Component {
+	constructor(props) {
+		super(props);
+		state: {
+		}
+	}
+
 	render() {
 		return (
 			<input
@@ -12,6 +18,7 @@ class Btn extends React.Component {
 				}`}
 				value={this.props.name}
 				id={this.props.id}
+				onClick=""
 			/>
 		);
 	}

@@ -14,14 +14,53 @@ class Keypad extends React.Component {
 	render() {
 		return (
 			<div className="container m-2 mb-4">
-				<div className="row  justify-content-center keygrp-mem">
+				<div
+					className="row  justify-content-center 
+				keygrp-mem"
+				>
 					{' '}
-					<Btn name="mc" size="1" type="dark" addstyle="disabled" />
-					<Btn name="mr" size="1" type="dark" addstyle="disabled" />
-					<Btn name="m+" size="1" type="dark" addstyle="disabled" />
-					<Btn name="m-" size="1" type="dark" addstyle="disabled" />
-					<Btn name="ms" size="1" type="dark" addstyle="disabled" />
-					<Btn name="m^" size="1" type="dark" addstyle="disabled" />
+					<input
+						type="button"
+						className={`btn-keypad border border-black rounded p-2 m-2 col-1 text-center btn btn-outline-dark unselectable disabled`}
+						value="mc"
+						id="mc"
+						onClick=""
+					/>
+					<input
+						type="button"
+						className={`btn-keypad border border-black rounded p-2 m-2 col-1 text-center btn btn-outline-dark unselectable disabled`}
+						value="mr"
+						id="mr"
+						onClick=""
+					/>
+					<input
+						type="button"
+						className={`btn-keypad border border-black rounded p-2 m-2 col-1 text-center btn btn-outline-dark unselectable disabled`}
+						value="m+"
+						id="m+"
+						onClick=""
+					/>
+					<Btn
+						name="m-"
+						size="1"
+						type="dark"
+						addstyle="disabled"
+						event={this.props.onClick}
+					/>
+					<Btn
+						name="ms"
+						size="1"
+						type="dark"
+						addstyle="disabled"
+						event={this.props.onClick}
+					/>
+					<Btn
+						name="m^"
+						size="1"
+						type="dark"
+						addstyle="disabled"
+						event={this.props.onClick}
+					/>
 				</div>
 				<div className="row  justify-content-center">
 					{' '}
@@ -33,6 +72,7 @@ class Keypad extends React.Component {
 						type="danger"
 						addstyle="font-weight-bold"
 						id="del"
+						event={this.props.onClick}
 					/>
 				</div>
 				<div className="row  justify-content-center">

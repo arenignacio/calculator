@@ -16,7 +16,7 @@ function View(props) {
 				className="equation d-flex flex-row justify-content-end text-black-50 font-weight-bold ls-1 "
 				id="problem"
 			>
-				{'Solution goes here'}
+				{props.problem}
 			</div>
 		</div>
 	);
