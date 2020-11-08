@@ -5,6 +5,7 @@ import toPostfix from './infixToPostfix';
 import calculate from './calcPostfix';
 
 import '../index.scss';
+import infixToPostfix from './infixToPostfix';
 
 /* 
 TODO:
@@ -25,15 +26,16 @@ class App extends React.Component {
 	//state controller function
 	handleClick = (newProblem) => {
 		this.setState({ problem: newProblem });
+		this.setState({ solution: calculate(infixToPostfix(newProblem)) });
 	};
 
 	render() {
 		return (
 			<div className="container border border-dark mt-2">
 				<h5 className="pt-2">Calculator - Aren I.</h5>
-				<View problem={this.state.problem} />
+				<View problem={this.state.problem} solution={this.state.solution} />
 				<br />
-				<Keypad problem={this.problemCopy} hClick={this.handleClick} />
+				<Keypad problem={this.state.problem} hClick={this.handleClick} />
 			</div>
 		);
 	}

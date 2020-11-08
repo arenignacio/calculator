@@ -10,7 +10,7 @@ function View(props) {
 				className="d-flex flex-row justify-content-end fs-xl"
 				id="solution"
 			>
-				<strong>{'123'}</strong>
+				<strong>{props.solution || 0}</strong>
 			</span>
 			<div
 				className="equation d-flex flex-row justify-content-end text-black-50 font-weight-bold ls-1 "
