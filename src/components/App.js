@@ -8,27 +8,24 @@ import '../index.scss';
 
 /* 
 TODO:
--Find a way to register keys from keypad and display them in view. something about binding function to "this" i.e. this.handleclick.bind(this) where handleclick is a function. it might be binding to parent component. see https://reactjs.org/docs/faq-functions.html#how-do-i-bind-a-function-to-a-component-instance
-
--remove Btn component and restructure Keypad component.
+-////Find a way to register keys from keypad and display them in view. something about binding function to "this" i.e. this.handleclick.bind(this) where handleclick is a function. it might be binding to parent component. see https://reactjs.org/docs/faq-functions.html#how-do-i-bind-a-function-to-a-component-instance
+-////remove Btn component and restructure Keypad component.
+# Add functionality to append key value to problem. currently, problem stays the same and appendage changes but does not add on top of one another.
  */
 
 class App extends React.Component {
 	state = {
-		problem: 'test-problem',
+		problem: '',
 		solution: '',
 	};
 
-	handleClick = this.handleClick.bind(this);
+	//create shallow copy of state "problem" to be passed down and mutated in keypad
+	problemCopy = this.state.problem.slice();
 
-	handleClick(key) {
-		console.log('good');
-		this.setState(function (state, key) {
-			return {
-				problem: state.problem + key,
-			};
-		});
-	}
+	//state controller function
+	handleClick = (newProblem) => {
+		this.setState({ problem: newProblem });
+	};
 
 	render() {
 		return (
@@ -36,7 +33,7 @@ class App extends React.Component {
 				<h5 className="pt-2">Calculator - Aren I.</h5>
 				<View problem={this.state.problem} />
 				<br />
-				<Keypad onClick={this.handleClick} />
+				<Keypad problem={this.problemCopy} hClick={this.handleClick} />
 			</div>
 		);
 	}
