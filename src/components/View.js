@@ -13,10 +13,10 @@ function View(props) {
 				<strong>{props.solution || 0}</strong>
 			</span>
 			<div
-				className="equation d-flex flex-row justify-content-end text-black-50 font-weight-bold ls-1 "
+				className="equation d-flex flex-row justify-content-end text-black-50 font-weight-bold ls-1"
 				id="problem"
 			>
-				{props.problem}
+				{props.problem || 0}
 			</div>
 		</div>
 	);

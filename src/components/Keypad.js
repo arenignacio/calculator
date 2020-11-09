@@ -1,5 +1,4 @@
 import React from 'react';
-import Btn from './Btn';
 
 /* memory buttons disabled */
 
@@ -14,12 +13,31 @@ class Keypad extends React.Component {
 	defaultStyle =
 		'btn-keypad border border-black rounded p-2 m-2 text-center btn unselectable';
 
-	renderBtn = (arr, style, size = '2') => {
+	renderBtn = (arr, style, size = '2', callBack) => {
 		return arr.map((el) => {
-			const newProblem = `${this.props.problem + el}`;
-
+			let newProblem = `${this.props.problem + el}`;
 			const addToView = () => {
-				this.props.hClick(newProblem);
+				switch (el) {
+					case 'x':
+						newProblem = `${this.props.problem + '*'}`;
+						break;
+
+					case 'C':
+						return this.props.init();
+
+					case 'mc':
+					case 'mr':
+					case 'm+':
+					case 'm-':
+					case 'ms':
+					case '+/-':
+					case 'DEL':
+					case 'CE':
+					case '=': //needs more logic
+						return;
+				}
+
+				return this.props.hClick(newProblem);
 			};
 
 			return (
@@ -27,7 +45,7 @@ class Keypad extends React.Component {
 					type="button"
 					className={`${this.defaultStyle} col-${size} ${style}`}
 					value={el}
-					onClick={addToView}
+					onClick={callBack || addToView}
 				/>
 			);
 		});
@@ -45,10 +63,8 @@ class Keypad extends React.Component {
 				</div>
 				<div className="row  justify-content-center">
 					{this.renderBtn(['%'], 'btn-outline-secondary')}
-					{this.renderBtn(
-						['CE', 'C'],
-						'btn-outline-primary font-weight-bold'
-					)}
+					{this.renderBtn(['CE'], 'btn-outline-primary font-weight-bold')}
+					{this.renderBtn(['C'], 'btn-outline-primary font-weight-bold')}
 					{this.renderBtn(['DEL'], 'btn-outline-danger font-weight-bold')}
 				</div>
 				<div className="row  justify-content-center">

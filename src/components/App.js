@@ -17,25 +17,41 @@ TODO:
 class App extends React.Component {
 	state = {
 		problem: '',
+		problemDisplay: '',
 		solution: '',
 	};
 
-	//create shallow copy of state "problem" to be passed down and mutated in keypad
-	problemCopy = this.state.problem.slice();
-
 	//state controller function
-	handleClick = (newProblem) => {
+	solve = (newProblem, newSolution = this.state.solution) => {
 		this.setState({ problem: newProblem });
-		this.setState({ solution: calculate(infixToPostfix(newProblem)) });
+		this.setState({ problemDisplay: newProblem.replace(/\*/g, 'x') });
+
+		if (calculate(infixToPostfix(newProblem)) !== 'incorrect formula') {
+			this.setState({ solution: calculate(infixToPostfix(newProblem)) });
+		}
+	};
+
+	init = () => {
+		this.setState({ problem: `` });
+		this.setState({ problemDisplay: 0 });
+		this.setState({ solution: 0 });
 	};
 
 	render() {
 		return (
 			<div className="container border border-dark mt-2">
 				<h5 className="pt-2">Calculator - Aren I.</h5>
-				<View problem={this.state.problem} solution={this.state.solution} />
+				<View
+					problem={this.state.problemDisplay}
+					solution={this.state.solution}
+				/>
 				<br />
-				<Keypad problem={this.state.problem} hClick={this.handleClick} />
+				<Keypad
+					problem={this.state.problem}
+					hClick={this.solve}
+					init={this.init}
+					solution={this.state.solution}
+				/>
 			</div>
 		);
 	}
