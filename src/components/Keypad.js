@@ -1,4 +1,7 @@
 import React from 'react';
+import infixToPostfix from './infixToPostfix';
+import isEqualQty from './isEqualQty';
+import isOperator from './isOperator';
 
 /* memory buttons disabled */
 
@@ -15,15 +18,26 @@ class Keypad extends React.Component {
 
 	renderBtn = (arr, style, size = '2', callBack) => {
 		return arr.map((el) => {
-			let newProblem = `${this.props.problem + el}`;
 			const addToView = () => {
+				//value props
+				const problem = this.props.problem;
+				const solution = this.props.solution;
+				const isProblemHidden = this.props.isProblemHidden;
+
+				//function props
+				const hClick = this.props.hClick;
+				const init = this.props.init;
+				const hideProblem = this.props.hideProblem;
+
+				let newProblem = problem + el;
+
 				switch (el) {
-					case 'x':
-						newProblem = `${this.props.problem + '*'}`;
-						break;
+					case 'CE':
+						return init(problem);
 
 					case 'C':
-						return this.props.init();
+						hideProblem();
+						return init();
 
 					case 'mc':
 					case 'mr':
@@ -31,13 +45,44 @@ class Keypad extends React.Component {
 					case 'm-':
 					case 'ms':
 					case '+/-':
+						hideProblem();
+						return init(0, solution);
+
+					case ')':
+						if (newProblem.includes('()')) {
+							return hClick(problem);
+						}
+						break;
 					case 'DEL':
-					case 'CE':
+						//copy this.props.problem to array and pop last element
+						let newProblemArr = Array.from(problem);
+						newProblemArr.pop();
+						//return mutated copy of problem into hClick
+						if (newProblemArr.length === 0) {
+							hideProblem();
+							return init();
+						} else {
+							return hClick(newProblemArr.join(''));
+						}
 					case '=': //needs more logic
-						return;
+						return init(0, solution);
+
+					case 'x':
+						isProblemHidden
+							? (newProblem = solution + '*')
+							: (newProblem = problem + '*');
+						break;
+					default:
+						if (isOperator(el)) {
+							isProblemHidden
+								? (newProblem = solution + el)
+								: (newProblem = problem + el);
+						}
 				}
 
-				return this.props.hClick(newProblem);
+				console.log('newProblem: ' + newProblem);
+				this.props.showProblem();
+				this.props.hClick(newProblem);
 			};
 
 			return (

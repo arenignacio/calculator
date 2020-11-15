@@ -1,4 +1,6 @@
 import getPrecedence from './getPrecedence';
+import isEqualQty from './isEqualQty';
+import isOperator from './isOperator';
 
 //.converts string of infix to postfix.
 const infixToPostfix = function (input) {
@@ -6,27 +8,8 @@ const infixToPostfix = function (input) {
 	const stack = [];
 	let inputArr = input.replace(/\s/g, '').split('');
 
-	//#checks
-	const isOperator = function (char) {
-		return ['+', '-', '/', '*', '^', '~'].includes(char);
-	};
-
 	const isSpecialChar = function (char) {
 		return ['.', '%'].includes(char);
-	};
-
-	const isEqualQty = function (element1, element2, iterative) {
-		let count = [0, 0];
-
-		for (const cur of iterative) {
-			if (cur === element1) {
-				count[0]++;
-			} else if (cur === element2) {
-				count[1]++;
-			}
-		}
-
-		return count[0] === count[1];
 	};
 
 	//get top of stack or (last element of stack array)
@@ -78,6 +61,10 @@ const infixToPostfix = function (input) {
 			inputArr.splice(i, 2, inputArr[0] + inputArr[1]);
 		} else if (!isNaN(inputArr[i]) && !isNaN(inputArr[i + 1])) {
 			inputArr.splice(i, 2, inputArr[i] + inputArr[i + 1]);
+		} else if (inputArr[i] === '(' && inputArr[i + 1] === ')') {
+			inputArr.length === 2
+				? inputArr.splice(i, 2, '0')
+				: inputArr.splice(i, 2); //! empty bracket logic
 		} else {
 			i++;
 		}
@@ -86,12 +73,22 @@ const infixToPostfix = function (input) {
 	//checks if parentheses if preceded by a number of operator. if it's alphanumeric, it inserts a '*' at beginning of the problem inside the parentheses so the solution inside the parentheses gets multiplied to the number outside before solving the rest of the problem
 	if (input.includes('(')) {
 		for (const [index, value] of inputArr.entries()) {
+			//add * before open bracket
 			if (
 				value === '(' &&
 				(/\w/.test(inputArr[index - 1]) || inputArr[index - 1] === ')') &&
 				inputArr[index - 1] !== undefined
 			) {
 				inputArr.splice(index, 0, '*');
+			}
+
+			//add * after closing bracket
+			if (
+				value === ')' &&
+				/\w/.test(inputArr[index + 1]) &&
+				inputArr[index + 1] !== undefined
+			) {
+				inputArr.splice(index + 1, 0, '*');
 			}
 		}
 	}

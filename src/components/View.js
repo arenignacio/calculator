@@ -1,25 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
-function View(props) {
+class View extends React.Component {
 	//useState just entered as part of learning process for hooks
-	const [equation] = useState(0);
+	state = { sizeModifier: 'xxl' };
 
-	return (
-		<div className="d-flex flex-column justify-content-end pr-3 py-1 ml-3 mr-3 viewport rounded">
-			<span
-				className="d-flex flex-row justify-content-end fs-xl"
-				id="solution"
-			>
-				<strong>{props.solution || 0}</strong>
-			</span>
-			<div
-				className="equation d-flex flex-row justify-content-end text-black-50 font-weight-bold ls-1"
-				id="problem"
-			>
-				{props.problem || 0}
+	render() {
+		return (
+			<div className=" d-flex flex-column justify-content-end pr-3 py-1 ml-3 mr-3 viewport rounded">
+				<span
+					className={`d-inline-block text-wrap d-flex flex-row justify-content-end fs-${this.props.sizeModifier}`}
+					id="solution"
+				>
+					<strong>{this.props.solution || 0}</strong>
+				</span>
+				<div
+					className="equation d-flex flex-row justify-content-end text-black-50 font-weight-bold ls-1"
+					id="problem"
+				>
+					{this.props.problem || ''}
+				</div>
 			</div>
-		</div>
-	);
+		);
+	}
 }
 
 export default View;

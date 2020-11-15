@@ -14,8 +14,9 @@ const getPrecedence = function (symbol) {
 			return 2;
 		case '=':
 			return 1;
+
 		default:
-			return 0;
+			return;
 	}
 };
 

@@ -1,24 +1,38 @@
+//components
 import React from 'react';
 import View from './View';
 import Keypad from './Keypad';
-import toPostfix from './infixToPostfix';
-import calculate from './calcPostfix';
 
-import '../index.scss';
+//modules
+import calculate from './calcPostfix';
 import infixToPostfix from './infixToPostfix';
+import '../index.scss';
 
 /* 
 TODO:
--////Find a way to register keys from keypad and display them in view. something about binding function to "this" i.e. this.handleclick.bind(this) where handleclick is a function. it might be binding to parent component. see https://reactjs.org/docs/faq-functions.html#how-do-i-bind-a-function-to-a-component-instance
--////remove Btn component and restructure Keypad component.
-# Add functionality to append key value to problem. currently, problem stays the same and appendage changes but does not add on top of one another.
+//-Find a way to register keys from keypad and display them in view. something about binding function to "this" i.e. this.handleclick.bind(this) where handleclick is a function. it might be binding to parent component. see https://reactjs.org/docs/faq-functions.html#how-do-i-bind-a-function-to-a-component-instance
+//-remove Btn component and restructure Keypad component.
+//=needs functionality for Equal sign where solution is shown and problem display is cleared but pressing an operator will add on to solution.
+- 
  */
 
 class App extends React.Component {
 	state = {
 		problem: '',
 		problemDisplay: '',
-		solution: '',
+		isProblemHidden: true,
+		sizeModifier: 'xxl',
+		solution: '0',
+	};
+
+	hideProblem = () => {
+		this.setState({ isProblemHidden: true });
+		this.setState({ sizeModifier: 'xxl' });
+	};
+
+	showProblem = () => {
+		this.setState({ isProblemHidden: false });
+		this.setState({ sizeModifier: 'xl' });
 	};
 
 	//state controller function
@@ -31,10 +45,21 @@ class App extends React.Component {
 		}
 	};
 
-	init = () => {
-		this.setState({ problem: `` });
-		this.setState({ problemDisplay: 0 });
-		this.setState({ solution: 0 });
+	init = (problem, solution = 0) => {
+		this.setState({ problem: problem || '' });
+		this.setState({
+			problemDisplay: problem ? problem.replace(/\*/g, 'x') : '',
+		});
+		this.setState({ solution: solution });
+
+		if (!problem) {
+			this.hideProblem();
+		} else {
+			this.showProblem();
+		}
+
+		console.log(problem);
+		console.log(this.state.problem);
 	};
 
 	render() {
@@ -44,13 +69,19 @@ class App extends React.Component {
 				<View
 					problem={this.state.problemDisplay}
 					solution={this.state.solution}
+					isProblemHidden={this.state.problemHidden}
+					sizeModifier={this.state.sizeModifier}
 				/>
 				<br />
 				<Keypad
 					problem={this.state.problem}
 					hClick={this.solve}
+					deleteLastChar={this.deleteChar}
 					init={this.init}
 					solution={this.state.solution}
+					hideProblem={this.hideProblem}
+					showProblem={this.showProblem}
+					isProblemHidden={this.state.isProblemHidden}
 				/>
 			</div>
 		);
