@@ -6,7 +6,7 @@ class View extends React.Component {
 
 	render() {
 		return (
-			<div className=" d-flex flex-column justify-content-end pr-3 py-1 ml-3 mr-3 viewport rounded">
+			<div className="parent d-flex flex-column justify-content-end pr-3 py-1 ml-3 mr-3 viewport rounded">
 				<span
 					className={`d-inline-block text-wrap d-flex flex-row justify-content-end fs-${this.props.sizeModifier}`}
 					id="solution"

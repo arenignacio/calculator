@@ -20,7 +20,7 @@ class Keypad extends React.Component {
 		return arr.map((el) => {
 			const addToView = () => {
 				//value props
-				const problem = this.props.problem;
+				let problem = this.props.problem;
 				const solution = this.props.solution;
 				const isProblemHidden = this.props.isProblemHidden;
 
@@ -30,6 +30,7 @@ class Keypad extends React.Component {
 				const hideProblem = this.props.hideProblem;
 
 				let newProblem = problem + el;
+				let newProblemArr = Array.from(problem);
 
 				switch (el) {
 					case 'CE':
@@ -55,7 +56,6 @@ class Keypad extends React.Component {
 						break;
 					case 'DEL':
 						//copy this.props.problem to array and pop last element
-						let newProblemArr = Array.from(problem);
 						newProblemArr.pop();
 						//return mutated copy of problem into hClick
 						if (newProblemArr.length === 0) {
@@ -68,12 +68,19 @@ class Keypad extends React.Component {
 						return init(0, solution);
 
 					case 'x':
+						if (isOperator(newProblemArr.pop())) {
+							problem = newProblemArr.join('');
+						}
 						isProblemHidden
 							? (newProblem = solution + '*')
 							: (newProblem = problem + '*');
 						break;
 					default:
 						if (isOperator(el)) {
+							if (isOperator(newProblemArr.pop())) {
+								problem = newProblemArr.join('');
+								console.log(newProblemArr);
+							}
 							isProblemHidden
 								? (newProblem = solution + el)
 								: (newProblem = problem + el);
