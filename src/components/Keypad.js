@@ -94,6 +94,7 @@ class Keypad extends React.Component {
 
 			return (
 				<input
+					key={el}
 					type="button"
 					className={`${this.defaultStyle} col-${size} ${style}`}
 					value={el}

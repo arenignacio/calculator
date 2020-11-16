@@ -8,7 +8,6 @@ import calculate from './calcPostfix';
 import infixToPostfix from './infixToPostfix';
 import '../index.scss';
 import isOperator from './isOperator';
-import isEqualQty from './isEqualQty';
 
 /* 
 TODO:
@@ -44,13 +43,14 @@ class App extends React.Component {
 		this.setState({ problemDisplay: newProblem.replace(/\*/g, 'x') });
 
 		if (calculate(infixToPostfix(newProblem)) !== 'incorrect formula') {
-			isOperator(newProblemArr.pop())
-				? this.setState({
-						solution: calculate(infixToPostfix(newProblemArr.join(''))),
-				  })
-				: this.setState({
-						solution: calculate(infixToPostfix(newProblem)),
-				  });
+			this.setState({ solution: calculate(infixToPostfix(newProblem)) });
+		} else if (
+			isOperator(newProblemArr.pop()) &&
+			calculate(infixToPostfix(newProblem)) !== 'incorrect formula'
+		) {
+			this.setState({
+				solution: calculate(infixToPostfix(newProblemArr.join(''))),
+			});
 		}
 	};
 
