@@ -45,7 +45,9 @@ class App extends React.Component {
 		if (calculate(infixToPostfix(newProblem)) !== 'incorrect formula') {
 			this.setState({ solution: calculate(infixToPostfix(newProblem)) });
 		} else if (isOperator(newProblemArr.pop())) {
-			this.setState({ solution: newProblemArr.join('') });
+			this.setState({
+				solution: calculate(infixToPostfix(newProblemArr.join(''))),
+			});
 		}
 	};
 
