@@ -8,6 +8,7 @@ import calculate from './calcPostfix';
 import infixToPostfix from './infixToPostfix';
 import '../index.scss';
 import isOperator from './isOperator';
+import isEqualQty from './isEqualQty';
 
 /* 
 TODO:
@@ -36,6 +37,12 @@ class App extends React.Component {
 		this.setState({ sizeModifier: 'xl' });
 	};
 
+	closeBracket = (open, close, arr) => {
+		while (!isEqualQty(open, close, arr)) {
+			arr.push(close);
+		}
+	};
+
 	//state controller function
 	solve = (newProblem, newSolution = this.state.solution) => {
 		this.setState({ problem: newProblem });
@@ -44,8 +51,28 @@ class App extends React.Component {
 		let newProblemArr = Array.from(newProblem);
 
 		if (calculate(infixToPostfix(newProblem)) !== 'incorrect formula') {
+			//if problem is clear of error, solve
 			this.setState({ solution: calculate(infixToPostfix(newProblem)) });
-		} else if (isOperator(newProblemArr.pop())) {
+		} else if (isOperator(newProblem.slice(-1))) {
+			//if last character is operator, pop and solve.
+			newProblemArr.pop();
+			if (isEqualQty('(', ')', newProblemArr)) {
+				this.setState({
+					solution: calculate(infixToPostfix(newProblemArr.join(''))),
+				});
+			} else {
+				//close parenthese if left open after popping operator
+				this.closeBracket('(', ')', newProblemArr);
+				this.setState({
+					solution: calculate(infixToPostfix(newProblemArr.join(''))),
+				});
+			}
+		} else if (
+			!isEqualQty('(', ')', newProblemArr) &&
+			!isNaN(newProblem.slice(-1))
+		) {
+			// close parentheses if open.
+			this.closeBracket('(', ')', newProblemArr);
 			this.setState({
 				solution: calculate(infixToPostfix(newProblemArr.join(''))),
 			});
