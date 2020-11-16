@@ -7,6 +7,7 @@ import Keypad from './Keypad';
 import calculate from './calcPostfix';
 import infixToPostfix from './infixToPostfix';
 import '../index.scss';
+import isOperator from './isOperator';
 
 /* 
 TODO:
@@ -37,11 +38,14 @@ class App extends React.Component {
 
 	//state controller function
 	solve = (newProblem, newSolution = this.state.solution) => {
+		let newProblemArr = Array.from(newProblem);
 		this.setState({ problem: newProblem });
 		this.setState({ problemDisplay: newProblem.replace(/\*/g, 'x') });
 
 		if (calculate(infixToPostfix(newProblem)) !== 'incorrect formula') {
 			this.setState({ solution: calculate(infixToPostfix(newProblem)) });
+		} else if (isOperator(newProblemArr.pop())) {
+			this.setState({ solution: newProblemArr.join('') });
 		}
 	};
 
