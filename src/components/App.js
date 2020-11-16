@@ -38,16 +38,14 @@ class App extends React.Component {
 
 	//state controller function
 	solve = (newProblem, newSolution = this.state.solution) => {
-		let newProblemArr = Array.from(newProblem);
 		this.setState({ problem: newProblem });
 		this.setState({ problemDisplay: newProblem.replace(/\*/g, 'x') });
 
+		let newProblemArr = Array.from(newProblem);
+
 		if (calculate(infixToPostfix(newProblem)) !== 'incorrect formula') {
 			this.setState({ solution: calculate(infixToPostfix(newProblem)) });
-		} else if (
-			isOperator(newProblemArr.pop()) &&
-			calculate(infixToPostfix(newProblem)) !== 'incorrect formula'
-		) {
+		} else if (isOperator(newProblemArr.pop())) {
 			this.setState({
 				solution: calculate(infixToPostfix(newProblemArr.join(''))),
 			});
