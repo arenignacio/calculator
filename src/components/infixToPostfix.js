@@ -26,6 +26,19 @@ const infixToPostfix = function (input) {
 	}
 
 	for (const [index, value] of inputArr.entries()) {
+		//protect against two consecutive decimals in one number
+		if (isOperator(value) || ['(', ')', '.'].includes(value)) {
+			stack.push(value);
+			let stackStr = stack.join('');
+			while (stack.length > 0) {
+				stack.pop();
+			}
+			if (stackStr.includes('..')) {
+				return 'invalid entry';
+			}
+		}
+
+		//protect against missing operand
 		if (isOperator(value) && isOperator(inputArr[index + 1])) {
 			return 'invalid entry';
 		} else if (

@@ -87,6 +87,34 @@ class Keypad extends React.Component {
 					case '=': //needs more logic
 						return init(0, solution);
 
+					case '.':
+						if (
+							isOperator(problem.slice(-1)) ||
+							problem.slice(-1) === '.'
+						) {
+							newProblemArr.pop();
+							problem = newProblemArr.join('');
+							console.log(newProblemArr);
+						}
+
+						const stack = newProblemArr.filter(
+							(el) => isOperator(el) || ['(', ')', '.'].includes(el)
+						);
+
+						stack.push(el);
+						const stackStr = stack.join('');
+
+						console.log(stack);
+
+						if (stackStr.includes('..')) {
+							return hClick(newProblemArr.join(''));
+						}
+
+						isProblemHidden
+							? (newProblem = solution + el)
+							: (newProblem = problem + el);
+						break;
+
 					case 'x':
 						if (isOperator(newProblemArr.pop())) {
 							problem = newProblemArr.join('');
@@ -97,7 +125,8 @@ class Keypad extends React.Component {
 						break;
 					default:
 						if (isOperator(el)) {
-							if (isOperator(newProblemArr.pop())) {
+							if (isOperator(problem.slice(-1))) {
+								newProblemArr.pop();
 								problem = newProblemArr.join('');
 								console.log(newProblemArr);
 							}
