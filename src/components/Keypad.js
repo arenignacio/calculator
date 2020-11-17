@@ -157,7 +157,7 @@ class Keypad extends React.Component {
 					{this.renderBtn(['+'], 'btn-outline-secondary')}
 				</div>
 				<div className="row  justify-content-center">
-					{this.renderBtn(['+/-'], 'btn-outline-secondary disabled')}{' '}
+					{this.renderBtn(['+/-'], 'btn-outline-secondary')}{' '}
 					{/* needs logic */}
 					{this.renderBtn(['0'], 'btn-light')}
 					{this.renderBtn(['.', '='], 'btn-outline-secondary')}
