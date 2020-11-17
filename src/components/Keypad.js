@@ -14,7 +14,7 @@ class Keypad extends React.Component {
 	}
 
 	defaultStyle =
-		'btn-keypad border border-black rounded p-2 m-2 text-center btn unselectable';
+		'font-weight-bold btn-keypad border-grey rounded p-2 m-2 text-center btn unselectable';
 
 	renderBtn = (arr, style, size = '2', callBack) => {
 		return arr.map((el) => {

@@ -62,3 +62,9 @@
 		font-size: 0.8rem;
 	}
 }
+
+.border {
+	&-grey {
+		border-color: grey;
+	}
+}
