@@ -74,6 +74,13 @@ class Keypad extends React.Component {
 						if (newProblemArr.length === 0) {
 							hideProblem();
 							return init();
+						} else if (
+							newProblemArr.length === 1 &&
+							isOperator(newProblemArr[0])
+						) {
+							newProblemArr.pop();
+							hideProblem();
+							return init();
 						} else {
 							return hClick(newProblemArr.join(''));
 						}
