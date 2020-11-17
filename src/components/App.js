@@ -50,7 +50,7 @@ class App extends React.Component {
 
 		let newProblemArr = Array.from(newProblem);
 
-		if (calculate(infixToPostfix(newProblem)) !== 'incorrect formula') {
+		if (calculate(infixToPostfix(newProblem)) !== 'invalid entry') {
 			//if problem is clear of error, solve
 			this.setState({ solution: calculate(infixToPostfix(newProblem)) });
 		} else if (isOperator(newProblem.slice(-1))) {

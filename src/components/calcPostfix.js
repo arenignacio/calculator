@@ -43,13 +43,13 @@ const calculate = (postFixStr) => {
 			} else if (/\w/.test(postFixArr[i])) {
 				i++;
 			} else if (isNaN(postFixArr[i]) && isNaN(postFixArr[i - 2])) {
-				return 'incorrect formula';
+				return 'invalid entry';
 			}
 		}
 		console.log('end of calculation');
 		return postFixArr.join('');
 	} else {
-		return 'incorrect formula';
+		return 'invalid entry';
 	}
 }; //#end of calculate function
 
