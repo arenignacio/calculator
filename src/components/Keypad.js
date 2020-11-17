@@ -45,9 +45,22 @@ class Keypad extends React.Component {
 					case 'm+':
 					case 'm-':
 					case 'ms':
-					case '+/-':
 						hideProblem();
 						return init(0, solution);
+					case '+/-':
+						if (newProblemArr[0] === '-') {
+							newProblemArr.shift();
+							newProblemArr.unshift('+');
+							return hClick(newProblemArr.join(''));
+						} else if (newProblemArr[0] === '+') {
+							newProblemArr.shift();
+							newProblemArr.unshift('-');
+							return hClick(newProblemArr.join(''));
+						} else if (!isNaN(newProblemArr[0])) {
+							newProblemArr.unshift('+');
+							return hClick(newProblemArr.join(''));
+						}
+						return;
 
 					case ')':
 						if (newProblem.includes('()')) {
