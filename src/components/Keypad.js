@@ -67,6 +67,11 @@ class Keypad extends React.Component {
 						if (newProblem.includes('()')) {
 							return hClick(problem);
 						}
+
+						if (newProblem.length === 1) {
+							newProblemArr.pop();
+							return hClick(newProblemArr.join(''));
+						}
 						break;
 					case 'DEL':
 						//copy this.props.problem to array and pop last element
@@ -76,8 +81,9 @@ class Keypad extends React.Component {
 							hideProblem();
 							return init();
 						} else if (
-							newProblemArr.length === 1 &&
-							isOperator(newProblemArr[0])
+							(newProblemArr.length === 1 &&
+								isOperator(newProblemArr[0])) ||
+							['(', ')'].includes(newProblemArr[0])
 						) {
 							newProblemArr.pop();
 							hideProblem();
