@@ -13,6 +13,7 @@ import isEqualQty from './isEqualQty';
 /* 
 TODO:
 - needs refractoring for optimization
+- add functionality for memory
  */
 
 class App extends React.Component {
@@ -96,25 +97,28 @@ class App extends React.Component {
 
 	render() {
 		return (
-			<div className="container border border-dark mt-2">
-				<h5 className="pt-2">Calculator - Aren I.</h5>
-				<View
-					problem={this.state.problemDisplay}
-					solution={this.state.solution}
-					isProblemHidden={this.state.problemHidden}
-					sizeModifier={this.state.sizeModifier}
-				/>
-				<br />
-				<Keypad
-					problem={this.state.problem}
-					hClick={this.solve}
-					deleteLastChar={this.deleteChar}
-					init={this.init}
-					solution={this.state.solution}
-					hideProblem={this.hideProblem}
-					showProblem={this.showProblem}
-					isProblemHidden={this.state.isProblemHidden}
-				/>
+			<div className="">
+				<div className="container border border-dark mt-2">
+					<h2 className="pt-2 text-center">Scientific Calculator</h2>
+					<View
+						problem={this.state.problemDisplay}
+						solution={this.state.solution}
+						isProblemHidden={this.state.problemHidden}
+						sizeModifier={this.state.sizeModifier}
+					/>
+					<br />
+					<Keypad
+						problem={this.state.problem}
+						hClick={this.solve}
+						deleteLastChar={this.deleteChar}
+						init={this.init}
+						solution={this.state.solution}
+						hideProblem={this.hideProblem}
+						showProblem={this.showProblem}
+						isProblemHidden={this.state.isProblemHidden}
+					/>
+				</div>
+				<p className="container text-right">Aren Ignacio</p>
 			</div>
 		);
 	}

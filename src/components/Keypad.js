@@ -1,19 +1,9 @@
 import React from 'react';
-import infixToPostfix from './infixToPostfix';
-import isEqualQty from './isEqualQty';
 import isGreaterThan from './isGreaterThan';
 import isOperator from './isOperator';
 
 /* memory buttons disabled */
-
 class Keypad extends React.Component {
-	constructor(props) {
-		super(props);
-
-		state: {
-		}
-	}
-
 	defaultStyle =
 		'font-weight-bold btn-keypad border-grey rounded p-2 m-2 text-center btn unselectable';
 
@@ -26,7 +16,6 @@ class Keypad extends React.Component {
 				const isProblemHidden = this.props.isProblemHidden;
 				let newProblemArr = Array.from(problem);
 				let lastChar = newProblemArr[newProblemArr.length - 1];
-				let newProblem = problem + el;
 
 				//function props
 				const hClick = this.props.hClick;
