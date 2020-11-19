@@ -1,6 +1,7 @@
 import React from 'react';
 import infixToPostfix from './infixToPostfix';
 import isEqualQty from './isEqualQty';
+import isGreaterThan from './isGreaterThan';
 import isOperator from './isOperator';
 
 /* memory buttons disabled */
@@ -23,22 +24,25 @@ class Keypad extends React.Component {
 				let problem = this.props.problem;
 				const solution = this.props.solution;
 				const isProblemHidden = this.props.isProblemHidden;
+				let newProblemArr = Array.from(problem);
+				let lastChar = newProblemArr[newProblemArr.length - 1];
+				let newProblem = problem + el;
 
 				//function props
 				const hClick = this.props.hClick;
 				const init = this.props.init;
 				const hideProblem = this.props.hideProblem;
 
-				let newProblem = problem + el;
-				let newProblemArr = Array.from(problem);
-
 				switch (el) {
 					case 'CE':
-						return init(problem);
+						return init(newProblemArr.join(''));
 
 					case 'C':
 						hideProblem();
 						return init();
+
+					case '=':
+						return init(0, solution);
 
 					case 'mc':
 					case 'mr':
@@ -46,106 +50,102 @@ class Keypad extends React.Component {
 					case 'm-':
 					case 'ms':
 						return;
-					/* hideProblem();
-						return init(0, solution); */
 					case '+/-':
 						if (newProblemArr[0] === '-') {
 							newProblemArr.shift();
 							newProblemArr.unshift('+');
-							return hClick(newProblemArr.join(''));
 						} else if (newProblemArr[0] === '+') {
 							newProblemArr.shift();
 							newProblemArr.unshift('-');
-							return hClick(newProblemArr.join(''));
-						} else if (!isNaN(newProblemArr[0])) {
-							newProblemArr.unshift('+');
-							return hClick(newProblemArr.join(''));
 						}
-						return;
+
+						if (!isNaN(newProblemArr[0])) {
+							newProblemArr.unshift('+');
+						}
+
+						break;
 
 					case ')':
-						if (newProblem.includes('()')) {
-							return hClick(problem);
-						}
+						if (lastChar !== '(') {
+							newProblemArr.push(')');
 
-						if (newProblem.length === 1) {
-							newProblemArr.pop();
-							return hClick(newProblemArr.join(''));
+							if (
+								newProblemArr.length === 1 ||
+								isGreaterThan(')', '(', newProblemArr)
+							) {
+								newProblemArr.pop();
+							}
 						}
 						break;
+
 					case 'DEL':
-						//copy this.props.problem to array and pop last element
 						newProblemArr.pop();
-						//return mutated copy of problem into hClick
-						if (newProblemArr.length === 0) {
-							hideProblem();
-							return init();
-						} else if (
+
+						if (
 							(newProblemArr.length === 1 &&
 								isOperator(newProblemArr[0])) ||
 							['(', ')'].includes(newProblemArr[0])
 						) {
 							newProblemArr.pop();
+						}
+
+						if (newProblemArr.length === 0) {
 							hideProblem();
 							return init();
-						} else {
-							return hClick(newProblemArr.join(''));
 						}
-					case '=': //needs more logic
-						return init(0, solution);
+
+						break;
 
 					case '.':
-						if (
-							isOperator(problem.slice(-1)) ||
-							problem.slice(-1) === '.'
-						) {
+						if (isOperator(lastChar) || lastChar === '.') {
 							newProblemArr.pop();
-							problem = newProblemArr.join('');
-							console.log(newProblemArr);
 						}
 
+						//prevent two decimals in one number
 						const stack = newProblemArr.filter(
 							(el) => isOperator(el) || ['(', ')', '.'].includes(el)
 						);
-
 						stack.push(el);
 						const stackStr = stack.join('');
 
-						console.log(stack);
-
-						if (stackStr.includes('..')) {
-							return hClick(newProblemArr.join(''));
+						if (!stackStr.includes('..')) {
+							isProblemHidden
+								? (newProblemArr = [solution, el])
+								: newProblemArr.push(el);
 						}
 
-						isProblemHidden
-							? (newProblem = solution + el)
-							: (newProblem = problem + el);
 						break;
 
 					case 'x':
-						if (isOperator(newProblemArr.pop())) {
-							problem = newProblemArr.join('');
+						if (isOperator(lastChar)) {
+							newProblemArr.pop();
 						}
-						isProblemHidden
-							? (newProblem = solution + '*')
-							: (newProblem = problem + '*');
+
+						newProblemArr.push('*');
+						if (isProblemHidden && solution !== '0') {
+							newProblemArr = [solution, '*'];
+						}
+
 						break;
+
 					default:
 						if (isOperator(el)) {
-							if (isOperator(problem.slice(-1))) {
+							if (isOperator(lastChar)) {
 								newProblemArr.pop();
-								problem = newProblemArr.join('');
-								console.log(newProblemArr);
 							}
-							isProblemHidden
-								? (newProblem = solution + el)
-								: (newProblem = problem + el);
+
+							if (isProblemHidden) {
+								newProblemArr = [solution];
+							}
 						}
+						newProblemArr.push(el);
+
+						break;
 				}
 
-				console.log('newProblem: ' + newProblem);
+				console.log('newProblemArr: ' + newProblemArr.join(''));
 				this.props.showProblem();
-				this.props.hClick(newProblem);
+				this.props.hClick(newProblemArr.join(''));
 			};
 
 			return (

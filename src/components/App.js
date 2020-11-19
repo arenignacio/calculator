@@ -12,10 +12,7 @@ import isEqualQty from './isEqualQty';
 
 /* 
 TODO:
-//-Find a way to register keys from keypad and display them in view. something about binding function to "this" i.e. this.handleclick.bind(this) where handleclick is a function. it might be binding to parent component. see https://reactjs.org/docs/faq-functions.html#how-do-i-bind-a-function-to-a-component-instance
-//-remove Btn component and restructure Keypad component.
-//=needs functionality for Equal sign where solution is shown and problem display is cleared but pressing an operator will add on to solution.
-- 
+- needs refractoring for optimization
  */
 
 class App extends React.Component {
@@ -28,13 +25,11 @@ class App extends React.Component {
 	};
 
 	hideProblem = () => {
-		this.setState({ isProblemHidden: true });
-		this.setState({ sizeModifier: 'xxl' });
+		this.setState({ isProblemHidden: true, sizeModifier: 'xxl' });
 	};
 
 	showProblem = () => {
-		this.setState({ isProblemHidden: false });
-		this.setState({ sizeModifier: 'xl' });
+		this.setState({ isProblemHidden: false, sizeModifier: 'xl' });
 	};
 
 	closeBracket = (open, close, arr) => {
@@ -45,8 +40,10 @@ class App extends React.Component {
 
 	//state controller function
 	solve = (newProblem, newSolution = this.state.solution) => {
-		this.setState({ problem: newProblem });
-		this.setState({ problemDisplay: newProblem.replace(/\*/g, 'x') });
+		this.setState({
+			problem: newProblem,
+			problemDisplay: newProblem.replace(/\*/g, 'x'),
+		});
 
 		let newProblemArr = Array.from(newProblem);
 
@@ -79,12 +76,13 @@ class App extends React.Component {
 		}
 	};
 
+	//initialize states
 	init = (problem, solution = 0) => {
-		this.setState({ problem: problem || '' });
 		this.setState({
+			problem: problem || '',
 			problemDisplay: problem ? problem.replace(/\*/g, 'x') : '',
+			solution: solution,
 		});
-		this.setState({ solution: solution });
 
 		if (!problem) {
 			this.hideProblem();
