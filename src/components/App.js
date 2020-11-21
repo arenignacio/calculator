@@ -14,6 +14,8 @@ import isEqualQty from './isEqualQty';
 TODO:
 - needs refractoring for optimization
 - add functionality for memory
+- add functionality for keypress
+- change styling to semantic-ui
  */
 
 class App extends React.Component {

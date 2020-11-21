@@ -3,13 +3,17 @@ import isGreaterThan from './isGreaterThan';
 import isOperator from './isOperator';
 
 /* memory buttons disabled */
+/* 
+TODO: keydown events for later update. Key identifiers already written in switch case.
+*/
+
 class Keypad extends React.Component {
 	defaultStyle =
 		'font-weight-bold btn-keypad border-grey rounded p-2 m-2 text-center btn unselectable';
 
 	renderBtn = (arr, style, size = '2', callBack) => {
 		return arr.map((el) => {
-			const addToView = () => {
+			const addToView = (event) => {
 				//value props
 				let problem = this.props.problem;
 				const solution = this.props.solution;
@@ -18,14 +22,25 @@ class Keypad extends React.Component {
 				let lastChar = newProblemArr[newProblemArr.length - 1];
 
 				//function props
-				const hClick = this.props.hClick;
 				const init = this.props.init;
 				const hideProblem = this.props.hideProblem;
+				const keypadChars = ['Backspace', 'Delete', 'c', 'C', '.'];
+
+				if (
+					event.key &&
+					(keypadChars.includes(event.key) ||
+						isOperator(event.key) ||
+						!isNaN(event.key))
+				) {
+					el = event.key;
+					console.log('key pressed ' + event.key);
+				}
 
 				switch (el) {
 					case 'CE':
 						return init(newProblemArr.join(''));
 
+					case 'c':
 					case 'C':
 						hideProblem();
 						return init();
@@ -67,6 +82,8 @@ class Keypad extends React.Component {
 						}
 						break;
 
+					case 'Backspace':
+					case 'Delete':
 					case 'DEL':
 						newProblemArr.pop();
 
@@ -105,6 +122,7 @@ class Keypad extends React.Component {
 
 						break;
 
+					case 'X':
 					case 'x':
 						if (isOperator(lastChar)) {
 							newProblemArr.pop();
@@ -137,6 +155,8 @@ class Keypad extends React.Component {
 				this.props.hClick(newProblemArr.join(''));
 			};
 
+			document.addEventListener('keydown', addToView);
+
 			return (
 				<input
 					key={el}
@@ -144,6 +164,7 @@ class Keypad extends React.Component {
 					className={`${this.defaultStyle} col-${size} ${style}`}
 					value={el}
 					onClick={callBack || addToView}
+					onKeyDown={addToView}
 				/>
 			);
 		});
