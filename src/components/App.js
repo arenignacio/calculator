@@ -120,7 +120,7 @@ class App extends React.Component {
 						isProblemHidden={this.state.isProblemHidden}
 					/>
 				</div>
-				<p className="container text-right">Aren Ignacio</p>
+				<p className="container text-right">&#169;Aren Ignacio</p>
 			</div>
 		);
 	}
