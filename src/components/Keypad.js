@@ -38,10 +38,7 @@ const Keypad = ({
 
 	const renderBtn = (arr, style, size = '2', callBack) => {
 		return arr.map((el) => {
-			const addToView = (keydown) => {
-				if (keydown) {
-					el = keydown;
-				}
+			const addToView = () => {
 				//value props
 				let appProblem = problem;
 				const appSolution = solution;
