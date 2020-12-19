@@ -1,140 +1,107 @@
 //components
-import React from 'react';
+import React, { useState } from 'react';
 import View from './View';
 import Keypad from './Keypad';
 
 //modules
-import calculate from './calcPostfix';
-import infixToPostfix from './infixToPostfix';
+import calculate from './helper_functions/calcPostfix';
+import infixToPostfix from './helper_functions/infixToPostfix';
 import '../index.scss';
-import isOperator from './isOperator';
-import isEqualQty from './isEqualQty';
+import isOperator from './helper_functions/isOperator';
+import isEqualQty from './helper_functions/isEqualQty';
 
-/* 
-TODO:
-- needs refractoring for optimization
-- add functionality for memory
-- add functionality for keypress
-- change styling to semantic-ui
- */
+function App() {
+	const [problem, setProblem] = useState('');
+	const [problemDisplay, setProblemDisplay] = useState('');
+	const [isProblemHidden, setIsProblemHidden] = useState(true);
+	const [sizeModifier, setSizeModifier] = useState('xxl');
+	const [solution, setSolution] = useState('0');
 
-class App extends React.Component {
-	state = {
-		problem: '',
-		problemDisplay: '',
-		isProblemHidden: true,
-		sizeModifier: 'xxl',
-		solution: '0',
+	const hideProblem = () => {
+		setIsProblemHidden(true);
+		setSizeModifier('xxl');
 	};
 
-	hideProblem = () => {
-		this.setState({ isProblemHidden: true, sizeModifier: 'xxl' });
+	const showProblem = () => {
+		setIsProblemHidden(false);
+		setSizeModifier('xl');
 	};
 
-	showProblem = () => {
-		this.setState({ isProblemHidden: false, sizeModifier: 'xl' });
-	};
-
-	closeBracket = (open, close, arr) => {
+	const closeBracket = (open, close, arr) => {
 		while (!isEqualQty(open, close, arr)) {
 			arr.push(close);
 		}
 	};
 
 	//state controller function
-	solve = (newProblem, newSolution = this.state.solution) => {
-		this.setState({
-			problem: newProblem,
-			problemDisplay: newProblem.replace(/\*/g, 'x'),
-		});
+	const solve = (newProblem, newSolution = solution) => {
+		setProblem(newProblem);
+		setProblemDisplay(newProblem.replace(/\*/g, 'x'));
 
 		let newProblemArr = Array.from(newProblem);
 
 		if (calculate(infixToPostfix(newProblem)) !== 'invalid entry') {
 			//if problem is clear of error, solve
-			this.setState({ solution: calculate(infixToPostfix(newProblem)) });
+			setSolution(calculate(infixToPostfix(newProblem)));
 		} else if (isOperator(newProblem.slice(-1))) {
 			//if last character is operator, pop and solve.
 			newProblemArr.pop();
 			if (isEqualQty('(', ')', newProblemArr)) {
-				this.setState({
-					solution: calculate(infixToPostfix(newProblemArr.join(''))),
-				});
+				setSolution(calculate(infixToPostfix(newProblemArr.join(''))));
 			} else {
 				//close parenthese if left open after popping operator
-				this.closeBracket('(', ')', newProblemArr);
-				this.setState({
-					solution: calculate(infixToPostfix(newProblemArr.join(''))),
-				});
+				closeBracket('(', ')', newProblemArr);
+				setSolution(calculate(infixToPostfix(newProblemArr.join(''))));
 			}
 		} else if (
 			!isEqualQty('(', ')', newProblemArr) &&
 			!isNaN(newProblem.slice(-1))
 		) {
 			// close parentheses if open.
-			this.closeBracket('(', ')', newProblemArr);
-			this.setState({
-				solution: calculate(infixToPostfix(newProblemArr.join(''))),
-			});
+			closeBracket('(', ')', newProblemArr);
+			setSolution(calculate(infixToPostfix(newProblemArr.join(''))));
 		}
 	};
 
 	//initialize states
-	init = (problem, solution = 0) => {
-		this.setState({
-			problem: problem || '',
-			problemDisplay: problem ? problem.replace(/\*/g, 'x') : '',
-			solution: solution,
-		});
+	const init = (problem, solution = 0) => {
+		setProblem(problem || '');
+		setProblemDisplay(problem ? problem.replace(/\*/g, 'x') : '');
+		setSolution(solution);
 
 		if (!problem) {
-			this.hideProblem();
+			hideProblem();
 		} else {
-			this.showProblem();
+			showProblem();
 		}
 
 		console.log(problem);
-		console.log(this.state.problem);
 	};
 
-	render() {
-		return (
-			<div className="">
-				<div className="container border border-dark mt-2">
-					<h2 className="pt-2 text-center">Scientific Calculator</h2>
-					<View
-						problem={this.state.problemDisplay}
-						solution={this.state.solution}
-						isProblemHidden={this.state.problemHidden}
-						sizeModifier={this.state.sizeModifier}
-					/>
-					<br />
-					<Keypad
-						problem={this.state.problem}
-						hClick={this.solve}
-						deleteLastChar={this.deleteChar}
-						init={this.init}
-						solution={this.state.solution}
-						hideProblem={this.hideProblem}
-						showProblem={this.showProblem}
-						isProblemHidden={this.state.isProblemHidden}
-					/>
-				</div>
-				<p className="container text-right">&#169;Aren Ignacio</p>
-			</div>
-		);
-	}
-}
-
-/* function App(props) {
 	return (
-		<div className="container border border-dark mt-2">
-			<h5 className="pt-2">Calculator - Aren I.</h5>
-			<View />
-			<br />
-			<Keypad />
+		<div className="">
+			<div className="container border border-dark mt-2">
+				<h2 className="pt-2 text-center">Scientific Calculator</h2>
+				<View
+					problem={problemDisplay}
+					solution={solution}
+					isProblemHidden={isProblemHidden}
+					sizeModifier={sizeModifier}
+				/>
+				<br />
+				<Keypad
+					problem={problem}
+					hClick={solve}
+					init={init}
+					solution={solution}
+					hideProblem={hideProblem}
+					showProblem={showProblem}
+					isProblemHidden={isProblemHidden}
+				/>
+			</div>
+			<p className="container text-right">&#169;Aren Ignacio</p>
 		</div>
 	);
-} */
+}
 
 export default App;

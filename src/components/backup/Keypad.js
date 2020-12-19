@@ -7,31 +7,23 @@ import isOperator from './helper_functions/isOperator';
 TODO: keydown events for later update. Key identifiers already written in switch case.
 */
 
-const Keypad = ({
-	showProblem,
-	hClick,
-	problem,
-	solution,
-	isProblemHidden,
-	init,
-	hideProblem,
-}) => {
-	const defaultStyle =
+class Keypad extends React.Component {
+	defaultStyle =
 		'font-weight-bold btn-keypad border-grey rounded p-2 m-2 text-center btn unselectable';
 
-	const renderBtn = (arr, style, size = '2', callBack) => {
+	renderBtn = (arr, style, size = '2', callBack) => {
 		return arr.map((el) => {
 			const addToView = (event) => {
 				//value props
-				let appProblem = problem;
-				const appSolution = solution;
-				const appisProblemHidden = isProblemHidden;
-				let newProblemArr = Array.from(appProblem);
+				let problem = this.props.problem;
+				const solution = this.props.solution;
+				const isProblemHidden = this.props.isProblemHidden;
+				let newProblemArr = Array.from(problem);
 				let lastChar = newProblemArr[newProblemArr.length - 1];
 
 				//function props
-				const appInit = init;
-				const apphideProblem = hideProblem;
+				const init = this.props.init;
+				const hideProblem = this.props.hideProblem;
 				const keypadChars = ['Backspace', 'Delete', 'c', 'C', '.'];
 
 				if (
@@ -46,15 +38,15 @@ const Keypad = ({
 
 				switch (el) {
 					case 'CE':
-						return appInit(newProblemArr.join(''));
+						return init(newProblemArr.join(''));
 
 					case 'c':
 					case 'C':
-						apphideProblem();
-						return appInit();
+						hideProblem();
+						return init();
 
 					case '=':
-						return appInit(0, appSolution);
+						return init(0, solution);
 
 					case 'mc':
 					case 'mr':
@@ -104,8 +96,8 @@ const Keypad = ({
 						}
 
 						if (newProblemArr.length === 0) {
-							apphideProblem();
-							return appInit();
+							hideProblem();
+							return init();
 						}
 
 						break;
@@ -123,8 +115,8 @@ const Keypad = ({
 						const stackStr = stack.join('');
 
 						if (!stackStr.includes('..')) {
-							appisProblemHidden
-								? (newProblemArr = [appSolution, el])
+							isProblemHidden
+								? (newProblemArr = [solution, el])
 								: newProblemArr.push(el);
 						}
 
@@ -137,8 +129,8 @@ const Keypad = ({
 						}
 
 						newProblemArr.push('*');
-						if (appisProblemHidden && appSolution !== '0') {
-							newProblemArr = [appSolution, '*'];
+						if (isProblemHidden && solution !== '0') {
+							newProblemArr = [solution, '*'];
 						}
 
 						break;
@@ -149,8 +141,8 @@ const Keypad = ({
 								newProblemArr.pop();
 							}
 
-							if (appisProblemHidden) {
-								newProblemArr = [appSolution];
+							if (isProblemHidden) {
+								newProblemArr = [solution];
 							}
 						}
 						newProblemArr.push(el);
@@ -159,8 +151,8 @@ const Keypad = ({
 				}
 
 				console.log('newProblemArr: ' + newProblemArr.join(''));
-				showProblem();
-				hClick(newProblemArr.join(''));
+				this.props.showProblem();
+				this.props.hClick(newProblemArr.join(''));
 			};
 
 			document.addEventListener('keydown', addToView);
@@ -169,7 +161,7 @@ const Keypad = ({
 				<input
 					key={el}
 					type="button"
-					className={`${defaultStyle} col-${size} ${style}`}
+					className={`${this.defaultStyle} col-${size} ${style}`}
 					value={el}
 					onClick={callBack || addToView}
 					onKeyDown={addToView}
@@ -178,44 +170,47 @@ const Keypad = ({
 		});
 	};
 
-	return (
-		<div className="container m-2 mb-4">
-			<div className="row justify-content-center">
-				{renderBtn(
-					['mc', 'mr', 'm+', 'm-', 'ms'],
-					'btn-outline-secondary disabled',
-					'1'
-				)}
-			</div>
-			<div className="row  justify-content-center">
-				{renderBtn(['%'], 'btn-outline-secondary')}
-				{renderBtn(['CE'], 'btn-outline-primary font-weight-bold')}
-				{renderBtn(['C'], 'btn-outline-primary font-weight-bold')}
-				{renderBtn(['DEL'], 'btn-outline-danger font-weight-bold')}
-			</div>
-			<div className="row  justify-content-center">
-				{renderBtn(['^', '(', ')', '/'], 'btn-outline-secondary')}
-			</div>
-			<div className="row  justify-content-center">
-				{renderBtn(['7', '8', '9'], 'btn-light')}
-				{renderBtn(['x'], 'btn-outline-secondary')}
-			</div>
+	render() {
+		return (
+			<div className="container m-2 mb-4">
+				<div className="row justify-content-center">
+					{this.renderBtn(
+						['mc', 'mr', 'm+', 'm-', 'ms'],
+						'btn-outline-secondary disabled',
+						'1'
+					)}
+				</div>
+				<div className="row  justify-content-center">
+					{this.renderBtn(['%'], 'btn-outline-secondary')}
+					{this.renderBtn(['CE'], 'btn-outline-primary font-weight-bold')}
+					{this.renderBtn(['C'], 'btn-outline-primary font-weight-bold')}
+					{this.renderBtn(['DEL'], 'btn-outline-danger font-weight-bold')}
+				</div>
+				<div className="row  justify-content-center">
+					{this.renderBtn(['^', '(', ')', '/'], 'btn-outline-secondary')}
+				</div>
+				<div className="row  justify-content-center">
+					{this.renderBtn(['7', '8', '9'], 'btn-light')}
+					{this.renderBtn(['x'], 'btn-outline-secondary')}
+				</div>
 
-			<div className="row  justify-content-center">
-				{renderBtn(['4', '5', '6'], 'btn-light')}
-				{renderBtn(['-'], 'btn-outline-secondary')}
+				<div className="row  justify-content-center">
+					{this.renderBtn(['4', '5', '6'], 'btn-light')}
+					{this.renderBtn(['-'], 'btn-outline-secondary')}
+				</div>
+				<div className="row  justify-content-center">
+					{this.renderBtn(['1', '2', '3'], 'btn-light')}
+					{this.renderBtn(['+'], 'btn-outline-secondary')}
+				</div>
+				<div className="row  justify-content-center">
+					{this.renderBtn(['+/-'], 'btn-outline-secondary')}{' '}
+					{/* needs logic */}
+					{this.renderBtn(['0'], 'btn-light')}
+					{this.renderBtn(['.', '='], 'btn-outline-secondary')}
+				</div>
 			</div>
-			<div className="row  justify-content-center">
-				{renderBtn(['1', '2', '3'], 'btn-light')}
-				{renderBtn(['+'], 'btn-outline-secondary')}
-			</div>
-			<div className="row  justify-content-center">
-				{renderBtn(['+/-'], 'btn-outline-secondary')} {/* needs logic */}
-				{renderBtn(['0'], 'btn-light')}
-				{renderBtn(['.', '='], 'btn-outline-secondary')}
-			</div>
-		</div>
-	);
-};
+		);
+	}
+}
 
 export default Keypad;
