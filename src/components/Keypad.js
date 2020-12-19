@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import isGreaterThan from './helper_functions/isGreaterThan';
 import isOperator from './helper_functions/isOperator';
 
@@ -16,12 +16,32 @@ const Keypad = ({
 	init,
 	hideProblem,
 }) => {
+	const ref = useRef();
+
+	useEffect(() => {
+		window.addEventListener('keydown', (event) => {
+			const keypadChars = ['Backspace', 'Delete', 'c', 'C', '.'];
+
+			if (
+				event.key &&
+				(keypadChars.includes(event.key) ||
+					isOperator(event.key) ||
+					!isNaN(event.key))
+			) {
+				console.log('key pressed ' + event.key);
+			}
+		});
+	}, []);
+
 	const defaultStyle =
 		'font-weight-bold btn-keypad border-grey rounded p-2 m-2 text-center btn unselectable';
 
 	const renderBtn = (arr, style, size = '2', callBack) => {
 		return arr.map((el) => {
-			const addToView = (event) => {
+			const addToView = (keydown) => {
+				if (keydown) {
+					el = keydown;
+				}
 				//value props
 				let appProblem = problem;
 				const appSolution = solution;
@@ -32,17 +52,6 @@ const Keypad = ({
 				//function props
 				const appInit = init;
 				const apphideProblem = hideProblem;
-				const keypadChars = ['Backspace', 'Delete', 'c', 'C', '.'];
-
-				if (
-					event.key &&
-					(keypadChars.includes(event.key) ||
-						isOperator(event.key) ||
-						!isNaN(event.key))
-				) {
-					el = event.key;
-					console.log('key pressed ' + event.key);
-				}
 
 				switch (el) {
 					case 'CE':
@@ -163,8 +172,6 @@ const Keypad = ({
 				hClick(newProblemArr.join(''));
 			};
 
-			document.addEventListener('keydown', addToView);
-
 			return (
 				<input
 					key={el}
@@ -179,7 +186,7 @@ const Keypad = ({
 	};
 
 	return (
-		<div className="container m-2 mb-4">
+		<div ref={ref} className="container m-2 mb-4">
 			<div className="row justify-content-center">
 				{renderBtn(
 					['mc', 'mr', 'm+', 'm-', 'ms'],
