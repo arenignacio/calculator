@@ -57,18 +57,11 @@ const infixToPostfix = function (input) {
 	for (let i = 0; i <= inputArr.length - 1; ) {
 		if (inputArr[0] === '.' && !isNaN(inputArr[1])) {
 			inputArr.splice(i, 2, `0${inputArr[i] + inputArr[i + 1]}`);
-		} else if (
-			(isOperator(inputArr[i]) || ['(', ')'].includes(inputArr[i])) &&
-			inputArr[i + 1] === '.'
-		) {
+		} else if ((isOperator(inputArr[i]) || ['(', ')'].includes(inputArr[i])) && inputArr[i + 1] === '.') {
 			inputArr.splice(i + 1, 1, `0.`);
 		} else if (inputArr[i + 1] === '.' && !inputArr[i].includes('.')) {
 			inputArr.splice(i, 2, inputArr[i] + inputArr[i + 1]);
-		} else if (
-			['+', '-'].includes(inputArr[i]) &&
-			['('].includes(inputArr[i - 1]) &&
-			!isNaN(inputArr[i + 1])
-		) {
+		} else if (['+', '-'].includes(inputArr[i]) && ['('].includes(inputArr[i - 1]) && !isNaN(inputArr[i + 1])) {
 			inputArr.splice(i, 2, inputArr[i] + inputArr[i + 1]);
 		} else if (['+', '-'].includes(inputArr[0]) && !isNaN(inputArr[1])) {
 			inputArr.splice(i, 2, inputArr[0] + inputArr[1]);
@@ -83,24 +76,17 @@ const infixToPostfix = function (input) {
 		}
 	}
 
-	//checks if parentheses if preceded by a number of operator. if it's alphanumeric, it inserts a '*' at beginning of the problem inside the parentheses so the solution inside the parentheses gets multiplied to the number outside before solving the rest of the problem
+	//checks if parentheses is preceded by a number of operator. 
+	//if it's alphanumeric, it inserts a '*' at beginning of the problem inside the parentheses so the solution inside the parentheses gets multiplied to the number outside before solving the rest of the problem
 	if (input.includes('(')) {
 		for (const [index, value] of inputArr.entries()) {
 			//add * before open bracket
-			if (
-				value === '(' &&
-				(/\w/.test(inputArr[index - 1]) || inputArr[index - 1] === ')') &&
-				inputArr[index - 1] !== undefined
-			) {
+			if (value === '(' && (/\w/.test(inputArr[index - 1]) || inputArr[index - 1] === ')') && inputArr[index - 1] !== undefined) {
 				inputArr.splice(index, 0, '*');
 			}
 
 			//add * after closing bracket
-			if (
-				value === ')' &&
-				/\w/.test(inputArr[index + 1]) &&
-				inputArr[index + 1] !== undefined
-			) {
+			if (value === ')' && /\w/.test(inputArr[index + 1]) && inputArr[index + 1] !== undefined) {
 				inputArr.splice(index + 1, 0, '*');
 			}
 		}
@@ -111,15 +97,7 @@ const infixToPostfix = function (input) {
 		let element = inputArr[idx];
 
 		if (!isNaN(element) && inputArr[idx + 1] === '%') {
-			!isNaN(inputArr[idx + 2])
-				? inputArr.splice(
-						idx,
-						3,
-						`${
-							(Number(inputArr[idx]) / 100) * Number(inputArr[idx + 2])
-						} `
-				  )
-				: inputArr.splice(idx, 2, `${Number(inputArr[idx]) / 100} `);
+			!isNaN(inputArr[idx + 2]) ? inputArr.splice(idx, 3, `${(Number(inputArr[idx]) / 100) * Number(inputArr[idx + 2])}`) : inputArr.splice(idx, 2, `${Number(inputArr[idx]) / 100} `);
 			result += inputArr[idx];
 		} else if (/\w/.test(element)) {
 			result += `${element} `;

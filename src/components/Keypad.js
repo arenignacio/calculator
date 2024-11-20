@@ -239,14 +239,7 @@ const Keypad = ({
 			};
 
 			return (
-				<input
-					key={el}
-					id={el}
-					type="button"
-					className={`${defaultStyle} col-${size} ${style}`}
-					value={el}
-					onClick={callBack || callAddToView}
-				/>
+				<input key={el} id={el} type="button" className={`${defaultStyle} col-${size} ${style}`} value={el} onClick={callBack || callAddToView}/>
 			);
 		});
 	};
@@ -254,11 +247,7 @@ const Keypad = ({
 	return (
 		<div ref={ref} className="container m-2 mb-4">
 			<div className="row justify-content-center">
-				{renderBtn(
-					['mc', 'mr', 'm+', 'm-', 'ms'],
-					'btn-outline-secondary disabled',
-					'1'
-				)}
+				{renderBtn(['mc', 'mr', 'm+', 'm-', 'ms'], 'btn-outline-secondary disabled', '1')}
 			</div>
 			<div className="row  justify-content-center">
 				{renderBtn(['%'], 'btn-outline-secondary')}

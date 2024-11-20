@@ -6,39 +6,20 @@ const calculate = (postFixStr) => {
 	if (postFixStr !== 'invalid entry') {
 		for (let i = 0; i <= postFixArr.length - 1; ) {
 			if (postFixArr[i] === '+' && !isNaN(postFixArr[i - 2])) {
-				postFixArr.splice(
-					i - 2,
-					3,
-					Number(postFixArr[i - 2]) + Number(postFixArr[i - 1])
-				);
+				postFixArr.splice(i - 2, 3, Number(postFixArr[i - 2]) + Number(postFixArr[i - 1]));
 				i = 0;
 			} else if (postFixArr[i] === '-' && !isNaN(postFixArr[i - 2])) {
-				postFixArr.splice(
-					i - 2,
-					3,
-					Number(postFixArr[i - 2]) - Number(postFixArr[i - 1])
-				);
+				postFixArr.splice(i - 2, 3, Number(postFixArr[i - 2]) - Number(postFixArr[i - 1]));
 				i = 0;
 			} else if (postFixArr[i] === '*' && !isNaN(postFixArr[i - 2])) {
-				postFixArr.splice(
-					i - 2,
-					3,
-					Number(postFixArr[i - 2]) * Number(postFixArr[i - 1])
+				postFixArr.splice(i - 2, 3, Number(postFixArr[i - 2]) * Number(postFixArr[i - 1])
 				);
 				i = 0;
 			} else if (postFixArr[i] === '/' && !isNaN(postFixArr[i - 2])) {
-				postFixArr.splice(
-					i - 2,
-					3,
-					Number(postFixArr[i - 2]) / Number(postFixArr[i - 1])
-				);
+				postFixArr.splice(i - 2, 3, Number(postFixArr[i - 2]) / Number(postFixArr[i - 1]));
 				i = 0;
 			} else if (postFixArr[i] === '^' && !isNaN(postFixArr[i - 2])) {
-				postFixArr.splice(
-					i - 2,
-					3,
-					Math.pow(Number(postFixArr[i - 2]), Number(postFixArr[i - 1]))
-				);
+				postFixArr.splice(i - 2, 3, Math.pow(Number(postFixArr[i - 2]), Number(postFixArr[i - 1])));
 				i = 0;
 			} else if (/\w/.test(postFixArr[i])) {
 				i++;
