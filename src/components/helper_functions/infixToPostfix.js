@@ -1,5 +1,5 @@
 import getPrecedence from './getPrecedence';
-import isEqualQty from './isEqualQty';
+import isClosed from './isClosed';
 import isOperator from './isOperator';
 
 //.converts string of infix to postfix.
@@ -18,10 +18,7 @@ const infixToPostfix = function (input) {
 	};
 
 	//#validator
-	if (
-		(!['+', '-', '.', '('].includes(inputArr[0]) && isNaN(inputArr[0])) ||
-		!isEqualQty('(', ')', inputArr)
-	) {
+	if ((!['+', '-', '.', '('].includes(inputArr[0]) && isNaN(inputArr[0])) || !isClosed(inputArr)) {
 		return 'invalid entry';
 	}
 

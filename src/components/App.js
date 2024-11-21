@@ -2,13 +2,14 @@
 import React, { useState } from 'react';
 import View from './View';
 import Keypad from './Keypad';
+import _ from 'lodash';
 
 //modules
 import calculate from './helper_functions/calcPostfix';
 import infixToPostfix from './helper_functions/infixToPostfix';
 import '../index.scss';
 import isOperator from './helper_functions/isOperator';
-import isEqualQty from './helper_functions/isEqualQty';
+import isClosed from './helper_functions/isClosed';
 
 function App() {
 	const [problem, setProblem] = useState('');
@@ -27,10 +28,13 @@ function App() {
 		setSizeModifier('xl');
 	};
 
-	const closeBracket = (open, close, arr) => {
-		while (!isEqualQty(open, close, arr)) {
-			arr.push(close);
+	const closeLooseBracket = ( arr) => {
+		let newArr = _.cloneDeep(arr);
+		while (!isClosed(newArr)) {
+			newArr.push(')');
 		}
+
+		return newArr;
 	};
 
 	//state controller function
@@ -39,28 +43,20 @@ function App() {
 		setProblemDisplay(newProblem.replace(/\*/g, 'x'));
 
 		let newProblemArr = Array.from(newProblem);
+		let solution;
 
-		if (calculate(infixToPostfix(newProblem)) !== 'invalid entry') {
-			//if problem is clear of error, solve
-			setSolution(calculate(infixToPostfix(newProblem)));
-		} else if (isOperator(newProblem.slice(-1))) {
-			//if last character is operator, pop and solve.
-			newProblemArr.pop();
-			if (isEqualQty('(', ')', newProblemArr)) {
-				setSolution(calculate(infixToPostfix(newProblemArr.join(''))));
-			} else {
-				//close parenthese if left open after popping operator
-				closeBracket('(', ')', newProblemArr);
-				setSolution(calculate(infixToPostfix(newProblemArr.join(''))));
-			}
-		} else if (
-			!isEqualQty('(', ')', newProblemArr) &&
-			!isNaN(newProblem.slice(-1))
-		) {
+		//if last character is operator, pop because it's incomplete.
+		if (isOperator(newProblem.slice(-1))) {
+			newProblemArr.pop();			
+		} 
+		
 			// close parentheses if open.
-			closeBracket('(', ')', newProblemArr);
-			setSolution(calculate(infixToPostfix(newProblemArr.join(''))));
+		if (!isClosed(newProblemArr)) {
+			newProblemArr = closeLooseBracket(newProblemArr);
 		}
+
+		solution = _getSolution(newProblemArr);
+		setSolution(solution);
 	};
 
 	//initialize states
@@ -76,6 +72,13 @@ function App() {
 		}
 
 		console.log(problem);
+	};
+
+	function _getSolution (problemArr) {
+		const stringifiedProblem = problemArr.join('');
+		const postFixProblem = infixToPostfix(stringifiedProblem);
+
+		return calculate(postFixProblem);
 	};
 
 	return (
