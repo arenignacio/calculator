@@ -2,7 +2,7 @@ import getPrecedence from './getPrecedence';
 import isClosed from './isClosed';
 import isOperator from './isOperator';
 
-//.converts string of infix to postfix.
+//.converts string of infix to postfix (reverse polish notation).
 const infixToPostfix = function (input) {
 	let result = '';
 	const stack = [];
