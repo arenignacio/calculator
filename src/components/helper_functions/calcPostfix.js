@@ -1,5 +1,7 @@
 //.calculates postFix
 const calculate = (postFixStr) => {
+
+
 	//split postfix using spaces in between. space is used to suggest end of a whole a number or a character so we can easily identify numbers/characters with more than one digit
 	let postFixArr = postFixStr.split(' ');
 
@@ -17,8 +19,7 @@ const calculate = (postFixStr) => {
 				postFixArr.splice(i - 2, 3, operandA - operandB);
 				i = 0;
 			} else if (currentCharacter === '*' && hasOperands) {
-				postFixArr.splice(i - 2, 3, operandA * operandB
-				);
+				postFixArr.splice(i - 2, 3, operandA * operandB);
 				i = 0;
 			} else if (currentCharacter === '/' && hasOperands) {
 				postFixArr.splice(i - 2, 3, operandA / operandB);
