@@ -38,25 +38,31 @@ function App() {
 	};
 
 	//state controller function
-	const solve = (newProblem, newSolution = solution) => {
-		setProblem(newProblem);
-		setProblemDisplay(newProblem.replace(/\*/g, 'x'));
+	const solve = (problem) => {
+		setProblem(problem);
+		setProblemDisplay(problem.replace(/\*/g, 'x'));
 
-		let newProblemArr = Array.from(newProblem);
+		const CURRENT_CHAR = problemArr[problemArr.length - 1];
+		let problemArr = Array.from(problem);
 		let solution;
 
 		//if last character is operator, pop because it's incomplete.
-		if (isOperator(newProblem.slice(-1))) {
-			newProblemArr.pop();			
-		} 
+		if (isOperator(CURRENT_CHAR)) {
+			problemArr.pop();			
+		}
 		
-			// close parentheses if open.
-		if (!isClosed(newProblemArr)) {
-			newProblemArr = closeLooseBracket(newProblemArr);
+		// close parentheses if open.
+		if (!isClosed(problemArr)) {
+			problemArr = closeLooseBracket(problemArr);
 		}
 
-		solution = _getSolution(newProblemArr);
-		setSolution(solution);
+		const stringifiedProblem = problemArr.join('');
+		const validPostFixProblem = infixToPostfix(stringifiedProblem);
+
+		if (validPostFixProblem) {
+			solution = calculate(validPostFixProblem);
+			setSolution(solution);
+		}		
 	};
 
 	//initialize states
@@ -72,13 +78,6 @@ function App() {
 		}
 
 		console.log(problem);
-	};
-
-	function _getSolution (problemArr) {
-		const stringifiedProblem = problemArr.join('');
-		const postFixProblem = infixToPostfix(stringifiedProblem);
-
-		return calculate(postFixProblem);
 	};
 
 	return (

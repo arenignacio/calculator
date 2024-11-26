@@ -3,56 +3,55 @@ import isClosed from './isClosed';
 import isOperator from './isOperator';
 
 //.converts string of infix to postfix (reverse polish notation).
+const STACK = [];
+
 const infixToPostfix = function (input) {
+	const inputArr = input.replace(/\s/g, '').split('');
+	const INPUT_ARR = input.replace(/\s/g, '').split('');
+	const HEAD_CHAR = inputArr[0];
+	const IS_VALID_FIRST_HEAD = !['+', '-', '.', '('].includes(HEAD_CHAR) && isNaN(HEAD_CHAR);
+
 	let result = '';
-	const stack = [];
-	let inputArr = input.replace(/\s/g, '').split('');
 
-	const isSpecialChar = function (char) {
-		return ['.', '%'].includes(char);
-	};
-
-	//get top of stack or (last element of stack array)
-	const topOfStack = () => {
-		return stack[stack.length - 1];
-	};
-
-	//#validator
-	if ((!['+', '-', '.', '('].includes(inputArr[0]) && isNaN(inputArr[0])) || !isClosed(inputArr)) {
-		return 'invalid entry';
+	//validation
+	if (IS_VALID_FIRST_HEAD || !isClosed(inputArr) || input.includes('..')) {
+		return;
 	}
 
-	for (const [index, value] of inputArr.entries()) {
-		//protect against two consecutive decimals in one number
-		if (isOperator(value) || ['(', ')', '.'].includes(value)) {
-			stack.push(value);
-			let stackStr = stack.join('');
-			while (stack.length > 0) {
-				stack.pop();
-			}
-			if (stackStr.includes('..')) {
-				return 'invalid entry';
-			}
+	for (let index = 0; index < INPUT_ARR.length - 1; index++) {
+		const CURRENT_CHAR = INPUT_ARR[index];
+		const NEXT_CHAR = INPUT_ARR[index + 1];
+		const PREV_CHAR = INPUT_ARR[index - 1];
+		const HAS_MISSING_OPERAND = (isOperator(CURRENT_CHAR) && isOperator(NEXT_CHAR)) || (_isSpecialChar(CURRENT_CHAR) && isOperator(PREV_CHAR) && isOperator(NEXT_CHAR)) || (CURRENT_CHAR === '%' && isNaN(PREV_CHAR));
+		
+		//protect against missing operand
+		if (HAS_MISSING_OPERAND) {
+			return;
 		}
 
-		//protect against missing operand
-		if (isOperator(value) && isOperator(inputArr[index + 1])) {
-			return 'invalid entry';
-		} else if (
-			isSpecialChar(value) &&
-			isOperator(inputArr[index - 1]) &&
-			isOperator(inputArr[index + 1])
-		) {
-			return 'invalid entry';
-		} else if (value === '%' && isNaN(inputArr[index - 1])) {
-			return 'invalid entry';
+		//protect against two consecutive decimals in one number
+		if (isOperator(CURRENT_CHAR) || ['(', ')', '.'].includes(CURRENT_CHAR)) {
+			STACK.push(CURRENT_CHAR);
+			
+			let STACKStr = STACK.join('');
+			
+			if (STACKStr.includes('..')) {
+				return;
+			}
+
+			while (STACK.length > 0) {
+				STACK.pop();
+			}
+			
+
 		}
+
 	}
 
 	//#grouper
 	//groups numeric values together
 	for (let i = 0; i <= inputArr.length - 1; ) {
-		if (inputArr[0] === '.' && !isNaN(inputArr[1])) {
+		if (HEAD_CHAR === '.' && !isNaN(inputArr[1])) {
 			inputArr.splice(i, 2, `0${inputArr[i] + inputArr[i + 1]}`);
 		} else if ((isOperator(inputArr[i]) || ['(', ')'].includes(inputArr[i])) && inputArr[i + 1] === '.') {
 			inputArr.splice(i + 1, 1, `0.`);
@@ -60,8 +59,8 @@ const infixToPostfix = function (input) {
 			inputArr.splice(i, 2, inputArr[i] + inputArr[i + 1]);
 		} else if (['+', '-'].includes(inputArr[i]) && ['('].includes(inputArr[i - 1]) && !isNaN(inputArr[i + 1])) {
 			inputArr.splice(i, 2, inputArr[i] + inputArr[i + 1]);
-		} else if (['+', '-'].includes(inputArr[0]) && !isNaN(inputArr[1])) {
-			inputArr.splice(i, 2, inputArr[0] + inputArr[1]);
+		} else if (['+', '-'].includes(HEAD_CHAR) && !isNaN(inputArr[1])) {
+			inputArr.splice(i, 2, HEAD_CHAR + inputArr[1]);
 		} else if (!isNaN(inputArr[i]) && !isNaN(inputArr[i + 1])) {
 			inputArr.splice(i, 2, inputArr[i] + inputArr[i + 1]);
 		} else if (inputArr[i] === '(' && inputArr[i + 1] === ')') {
@@ -99,30 +98,41 @@ const infixToPostfix = function (input) {
 		} else if (/\w/.test(element)) {
 			result += `${element} `;
 		} else if (element === '(') {
-			stack.push(element);
+			STACK.push(element);
 		} else if (element === ')') {
-			//if element is closing parentheses, empty stack until open parantheses has been found
-			while (topOfStack() !== '(') {
-				result += `${stack.pop()} `;
+			//if element is closing parentheses, empty STACK until open parantheses has been found
+			while (STACK_HEAD() !== '(') {
+				result += `${STACK.pop()} `;
 			}
-			stack.pop();
+
+			STACK.pop();
 		} else {
-			//if element is an operator, compare precedence with top of stack
-			if (getPrecedence(element) <= getPrecedence(topOfStack())) {
-				result += `${stack.pop()} `;
+			//if element is an operator, compare precedence with top of STACK
+			if (getPrecedence(element) <= getPrecedence(STACK_HEAD())) {
+				result += `${STACK.pop()} `;
 			}
-			stack.push(element);
+			STACK.push(element);
 		}
 		idx++;
 	}
 
-	//push remaining operators in stack to result after each element has been evaluated
-	while (stack.length > 0) {
-		result += `${stack.pop()} `;
+	//push remaining operators in STACK to result after each element has been evaluated
+	while (STACK.length > 0) {
+		result += `${STACK.pop()} `;
 	}
 
 	//since each operator and number is followed by a space, last number/operator will contain a space, this cleans that and prepares result for calculation which splits the string by space.
 	return result.trimEnd();
 }; //#end of infixToPostfix function;
+
+
+function _isSpecialChar (char) {
+	return ['.', '%'].includes(char);
+};
+
+//get top of STACK or (last element of STACK array)
+function STACK_HEAD () {
+	return STACK[STACK.length - 1];
+};
 
 export default infixToPostfix;
