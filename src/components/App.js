@@ -42,7 +42,8 @@ function App() {
 		setProblem(problem);
 		setProblemDisplay(problem.replace(/\*/g, 'x'));
 
-		const CURRENT_CHAR = problemArr[problemArr.length - 1];
+		const CURRENT_CHAR = problem[problem.length - 1];
+		
 		let problemArr = Array.from(problem);
 		let solution;
 
@@ -50,7 +51,7 @@ function App() {
 		if (isOperator(CURRENT_CHAR)) {
 			problemArr.pop();			
 		}
-		
+
 		// close parentheses if open.
 		if (!isClosed(problemArr)) {
 			problemArr = closeLooseBracket(problemArr);
