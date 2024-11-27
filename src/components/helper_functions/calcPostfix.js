@@ -1,4 +1,6 @@
+import _ from 'lodash';
 //.calculates postFix
+
 const calculate = (postFixStr) => {
 
 
@@ -10,7 +12,7 @@ const calculate = (postFixStr) => {
 			const currentCharacter = postFixArr[i];
 			const operandA = parseFloat(postFixArr[i - 2]);
 			const operandB = parseFloat(postFixArr[i - 1]);
-			const hasOperands = !!operandA && !!operandB;
+			const hasOperands = _.isNumber(operandA) && _.isNumber(operandB);
 
 			//EMI TODO: can be refactored to a switch case ?
 			if (currentCharacter === '+' && hasOperands) {
