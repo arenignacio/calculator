@@ -2,21 +2,22 @@
 import React, { useState } from 'react';
 import View from './View';
 import Keypad from './Keypad';
-import _ from 'lodash';
 
-//modules
+//dependencies
 import calculate from './helper_functions/calcPostfix';
 import infixToPostfix from './helper_functions/infixToPostfix';
 import '../index.scss';
 import isOperator from './helper_functions/isOperator';
 import isClosed from './helper_functions/isClosed';
+import _isSpecialChar from './helper_functions/isSpecialChar';
+import _ from 'lodash';
 
 function App() {
 	const [problem, setProblem] = useState('');
 	const [problemDisplay, setProblemDisplay] = useState('');
 	const [isProblemHidden, setIsProblemHidden] = useState(true);
 	const [sizeModifier, setSizeModifier] = useState('xxl');
-	const [solution, setSolution] = useState('0');
+	const [solution, setSolution] = useState('');
 
 	const hideProblem = () => {
 		setIsProblemHidden(true);
@@ -28,46 +29,30 @@ function App() {
 		setSizeModifier('xl');
 	};
 
-	const closeLooseBracket = ( arr) => {
-		let newArr = _.cloneDeep(arr);
-		while (!isClosed(newArr)) {
-			newArr.push(')');
-		}
-
-		return newArr;
-	};
-
 	//state controller function
 	const solve = (problem) => {
 		setProblem(problem);
 		setProblemDisplay(problem.replace(/\*/g, 'x'));
 
-		const CURRENT_CHAR = problem[problem.length - 1];
-		
-		let problemArr = Array.from(problem);
+		const PROBLEM_ARR = _cleanUpToArr(problem);
+		const IS_VALID = _isValid(PROBLEM_ARR);
+
 		let solution;
 
-		//if last character is operator, pop because it's incomplete.
-		if (isOperator(CURRENT_CHAR)) {
-			problemArr.pop();			
+		if (IS_VALID) {
+			const PROBLEM_STR = PROBLEM_ARR.join('');
+			const POST_FIX_PROBLEM = infixToPostfix(PROBLEM_STR);
+
+			solution = calculate(POST_FIX_PROBLEM);
+		} else {
+			solution = 'Error';
 		}
 
-		// close parentheses if open.
-		if (!isClosed(problemArr)) {
-			problemArr = closeLooseBracket(problemArr);
-		}
-
-		const stringifiedProblem = problemArr.join('');
-		const validPostFixProblem = infixToPostfix(stringifiedProblem);
-
-		if (validPostFixProblem) {
-			solution = calculate(validPostFixProblem);
-			setSolution(solution);
-		}		
+		setSolution(solution);
 	};
 
 	//initialize states
-	const init = (problem, solution = 0) => {
+	const init = (problem, solution = '') => {
 		setProblem(problem || '');
 		setProblemDisplay(problem ? problem.replace(/\*/g, 'x') : '');
 		setSolution(solution);
@@ -106,5 +91,58 @@ function App() {
 		</div>
 	);
 }
+
+function _isValid (INPUT_ARR) {
+	for (let index = 0; index < INPUT_ARR.length; index++) {
+		const CURRENT_CHAR = INPUT_ARR[index];
+		const NEXT_CHAR = INPUT_ARR[index + 1];
+		const PREV_CHAR = INPUT_ARR[index - 1];
+		const HAS_MISSING_OPERAND = (isOperator(CURRENT_CHAR) && isOperator(NEXT_CHAR)) 
+			|| (_isSpecialChar(CURRENT_CHAR) && isOperator(PREV_CHAR) && isOperator(NEXT_CHAR)) 
+			|| (CURRENT_CHAR === '%' && isNaN(PREV_CHAR));
+	
+		//validate against missing operand
+		if (HAS_MISSING_OPERAND) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+function _cleanUpToArr (problem) {
+	const CURRENT_CHAR = problem[problem.length - 1];
+	let result = Array.from(problem);
+
+	//if last character is operator, pop because it's incomplete.
+	if (isOperator(CURRENT_CHAR)) {
+		result.pop();
+	}
+
+	//if first character is a negative, add 0 so we can deduct the numbers
+	if (result[0] === '-') {
+		result.unshift('0');
+	}
+
+	// close parentheses if open.
+	if (!isClosed(result)) {
+		result = _closeLooseBracket(result);
+	}
+
+	return result;
+}
+
+
+function _closeLooseBracket (arr) {
+	let newArr = _.cloneDeep(arr);
+	while (!isClosed(newArr)) {
+		newArr.push(')');
+	}
+
+	return newArr;
+};
+
+
+
 
 export default App;

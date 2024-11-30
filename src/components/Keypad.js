@@ -26,8 +26,6 @@ const Keypad = ({
 	const ref = useRef();
 
 	const addToView = (el) => {
-		console.log(`el is ${el}`);
-		console.log(`problem is ${problem}`);
 
 		//value props
 		const appSolution = solution;
