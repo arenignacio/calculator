@@ -114,14 +114,15 @@ function _cleanUpToArr (problem) {
 	const CURRENT_CHAR = problem[problem.length - 1];
 	let result = Array.from(problem);
 
+	
+	//if first character is a negative, add 0 so we can deduct the numbers
+	if (result[0] === '-' || result[0] === '+') {
+		result.unshift('0');
+	}
+
 	//if last character is operator, pop because it's incomplete.
 	if (isOperator(CURRENT_CHAR)) {
 		result.pop();
-	}
-
-	//if first character is a negative, add 0 so we can deduct the numbers
-	if (result[0] === '-') {
-		result.unshift('0');
 	}
 
 	// close parentheses if open.

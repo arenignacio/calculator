@@ -60,12 +60,14 @@ const Keypad = ({
 				if (newProblemArr[0] === '-') {
 					newProblemArr.shift();
 					newProblemArr.unshift('+');
-				} else if (newProblemArr[0] === '+') {
+				} 
+				
+				if (newProblemArr[0] === '+') {
 					newProblemArr.shift();
 					newProblemArr.unshift('-');
 				}
 
-				if (!isNaN(newProblemArr[0])) {
+				if (!newProblemArr[0]) {
 					newProblemArr.unshift('+');
 				}
 
