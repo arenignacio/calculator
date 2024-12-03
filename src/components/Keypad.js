@@ -26,8 +26,6 @@ const Keypad = ({
 	const ref = useRef();
 
 	const addToView = (el) => {
-		console.log(`el is ${el}`);
-		console.log(`problem is ${problem}`);
 
 		//value props
 		const appSolution = solution;
@@ -62,12 +60,14 @@ const Keypad = ({
 				if (newProblemArr[0] === '-') {
 					newProblemArr.shift();
 					newProblemArr.unshift('+');
-				} else if (newProblemArr[0] === '+') {
+				} 
+				
+				if (newProblemArr[0] === '+') {
 					newProblemArr.shift();
 					newProblemArr.unshift('-');
 				}
 
-				if (!isNaN(newProblemArr[0])) {
+				if (!newProblemArr[0]) {
 					newProblemArr.unshift('+');
 				}
 
@@ -77,10 +77,7 @@ const Keypad = ({
 				if (lastChar !== '(') {
 					newProblemArr.push(')');
 
-					if (
-						newProblemArr.length === 1 ||
-						isGreaterThan(')', '(', newProblemArr)
-					) {
+					if (newProblemArr.length === 1 || isGreaterThan(')', '(', newProblemArr)) {
 						newProblemArr.pop();
 					}
 				}
@@ -178,14 +175,18 @@ const Keypad = ({
 				break;
 		}
 
-		const selectedNode = document.getElementById(key);
+		try {
+			const selectedNode = document.getElementById(key);
+			selectedNode.focus();
+	
+			setTimeout(() => {
+				selectedNode.blur();
+			}, 150);
+		} catch (e) {
+			return;
+		}
 
-		console.log(selectedNode);
-		selectedNode.focus();
-
-		setTimeout(() => {
-			selectedNode.blur();
-		}, 150);
+	
 	};
 
 	useEffect(() => {
@@ -217,10 +218,6 @@ const Keypad = ({
 		return () => {
 			window.removeEventListener('keydown', handleKeydown);
 		};
-	});
-
-	useEffect(() => {
-		console.log('re-render');
 	});
 
 	const defaultStyle =

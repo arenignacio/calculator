@@ -3,19 +3,21 @@ import React, { useState } from 'react';
 import View from './View';
 import Keypad from './Keypad';
 
-//modules
+//dependencies
 import calculate from './helper_functions/calcPostfix';
 import infixToPostfix from './helper_functions/infixToPostfix';
 import '../index.scss';
 import isOperator from './helper_functions/isOperator';
-import isEqualQty from './helper_functions/isEqualQty';
+import isClosed from './helper_functions/isClosed';
+import _isSpecialChar from './helper_functions/isSpecialChar';
+import _ from 'lodash';
 
 function App() {
 	const [problem, setProblem] = useState('');
 	const [problemDisplay, setProblemDisplay] = useState('');
 	const [isProblemHidden, setIsProblemHidden] = useState(true);
 	const [sizeModifier, setSizeModifier] = useState('xxl');
-	const [solution, setSolution] = useState('0');
+	const [solution, setSolution] = useState('');
 
 	const hideProblem = () => {
 		setIsProblemHidden(true);
@@ -27,44 +29,30 @@ function App() {
 		setSizeModifier('xl');
 	};
 
-	const closeBracket = (open, close, arr) => {
-		while (!isEqualQty(open, close, arr)) {
-			arr.push(close);
-		}
-	};
-
 	//state controller function
-	const solve = (newProblem, newSolution = solution) => {
-		setProblem(newProblem);
-		setProblemDisplay(newProblem.replace(/\*/g, 'x'));
+	const solve = (problem) => {
+		setProblem(problem);
+		setProblemDisplay(problem.replace(/\*/g, 'x'));
 
-		let newProblemArr = Array.from(newProblem);
+		const PROBLEM_ARR = _cleanUpToArr(problem);
+		const IS_VALID = _isValid(PROBLEM_ARR);
 
-		if (calculate(infixToPostfix(newProblem)) !== 'invalid entry') {
-			//if problem is clear of error, solve
-			setSolution(calculate(infixToPostfix(newProblem)));
-		} else if (isOperator(newProblem.slice(-1))) {
-			//if last character is operator, pop and solve.
-			newProblemArr.pop();
-			if (isEqualQty('(', ')', newProblemArr)) {
-				setSolution(calculate(infixToPostfix(newProblemArr.join(''))));
-			} else {
-				//close parenthese if left open after popping operator
-				closeBracket('(', ')', newProblemArr);
-				setSolution(calculate(infixToPostfix(newProblemArr.join(''))));
-			}
-		} else if (
-			!isEqualQty('(', ')', newProblemArr) &&
-			!isNaN(newProblem.slice(-1))
-		) {
-			// close parentheses if open.
-			closeBracket('(', ')', newProblemArr);
-			setSolution(calculate(infixToPostfix(newProblemArr.join(''))));
+		let solution;
+
+		if (IS_VALID) {
+			const PROBLEM_STR = PROBLEM_ARR.join('');
+			const POST_FIX_PROBLEM = infixToPostfix(PROBLEM_STR);
+
+			solution = calculate(POST_FIX_PROBLEM);
+		} else {
+			solution = 'Error';
 		}
+
+		setSolution(solution);
 	};
 
 	//initialize states
-	const init = (problem, solution = 0) => {
+	const init = (problem, solution = '') => {
 		setProblem(problem || '');
 		setProblemDisplay(problem ? problem.replace(/\*/g, 'x') : '');
 		setSolution(solution);
@@ -103,5 +91,59 @@ function App() {
 		</div>
 	);
 }
+
+function _isValid (INPUT_ARR) {
+	for (let index = 0; index < INPUT_ARR.length; index++) {
+		const CURRENT_CHAR = INPUT_ARR[index];
+		const NEXT_CHAR = INPUT_ARR[index + 1];
+		const PREV_CHAR = INPUT_ARR[index - 1];
+		const HAS_MISSING_OPERAND = (isOperator(CURRENT_CHAR) && isOperator(NEXT_CHAR)) 
+			|| (_isSpecialChar(CURRENT_CHAR) && isOperator(PREV_CHAR) && isOperator(NEXT_CHAR)) 
+			|| (CURRENT_CHAR === '%' && isNaN(PREV_CHAR));
+	
+		//validate against missing operand
+		if (HAS_MISSING_OPERAND) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+function _cleanUpToArr (problem) {
+	const CURRENT_CHAR = problem[problem.length - 1];
+	let result = Array.from(problem);
+
+	
+	//if first character is a negative, add 0 so we can deduct the numbers
+	if (isOperator(result[0])) {
+		result.unshift('0');
+	}
+
+	//if last character is operator, pop because it's incomplete.
+	if (isOperator(CURRENT_CHAR)) {
+		result.pop();
+	}
+
+	// close parentheses if open.
+	if (!isClosed(result)) {
+		result = _closeLooseBracket(result);
+	}
+
+	return result;
+}
+
+
+function _closeLooseBracket (arr) {
+	let newArr = _.cloneDeep(arr);
+	while (!isClosed(newArr)) {
+		newArr.push(')');
+	}
+
+	return newArr;
+};
+
+
+
 
 export default App;

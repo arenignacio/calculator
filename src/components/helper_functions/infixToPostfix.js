@@ -1,131 +1,110 @@
 import getPrecedence from './getPrecedence';
-import isEqualQty from './isEqualQty';
+import isClosed from './isClosed';
 import isOperator from './isOperator';
+import _isSpecialChar from './isSpecialChar';
 
-//.converts string of infix to postfix.
+//.converts string of infix to postfix (reverse polish notation).
+const STACK = [];
+
 const infixToPostfix = function (input) {
+	const INPUT_ARR = input.replace(/\s/g, '').split('');
+	const HEAD_CHAR = INPUT_ARR[0];
+	const IS_VALID_FIRST_HEAD = !['+', '-', '.', '('].includes(HEAD_CHAR) && isNaN(HEAD_CHAR);
+
 	let result = '';
-	const stack = [];
-	let inputArr = input.replace(/\s/g, '').split('');
+	let groupedInputArr = [];
 
-	const isSpecialChar = function (char) {
-		return ['.', '%'].includes(char);
-	};
-
-	//get top of stack or (last element of stack array)
-	const topOfStack = () => {
-		return stack[stack.length - 1];
-	};
-
-	//#validator
-	if (
-		(!['+', '-', '.', '('].includes(inputArr[0]) && isNaN(inputArr[0])) ||
-		!isEqualQty('(', ')', inputArr)
-	) {
-		return 'invalid entry';
+	//validation
+	if (IS_VALID_FIRST_HEAD || !isClosed(INPUT_ARR) || input.includes('..')) {
+		return;
 	}
 
-	for (const [index, value] of inputArr.entries()) {
-		//protect against two consecutive decimals in one number
-		if (isOperator(value) || ['(', ')', '.'].includes(value)) {
-			stack.push(value);
-			let stackStr = stack.join('');
-			while (stack.length > 0) {
-				stack.pop();
-			}
-			if (stackStr.includes('..')) {
-				return 'invalid entry';
-			}
+	//TODO - EMI - This looks like it should be put in App.js during validation. String should also be cleaned up. infixToPostfix should have a single responsibility of converting infix to postfix
+	for (let index = 0; index < INPUT_ARR.length; index++) {
+		const CURRENT_CHAR = INPUT_ARR[index];
+		const NEXT_CHAR = INPUT_ARR[index + 1];
+		const PREV_CHAR = INPUT_ARR[index - 1];
+		const HAS_MISSING_OPERAND = (isOperator(CURRENT_CHAR) && isOperator(NEXT_CHAR)) 
+			|| (_isSpecialChar(CURRENT_CHAR) && isOperator(PREV_CHAR) && isOperator(NEXT_CHAR)) 
+			|| (CURRENT_CHAR === '%' && isNaN(PREV_CHAR));
+	
+		//validate against missing operand
+		if (HAS_MISSING_OPERAND) {
+			return;
 		}
 
-		//protect against missing operand
-		if (isOperator(value) && isOperator(inputArr[index + 1])) {
-			return 'invalid entry';
-		} else if (
-			isSpecialChar(value) &&
-			isOperator(inputArr[index - 1]) &&
-			isOperator(inputArr[index + 1])
-		) {
-			return 'invalid entry';
-		} else if (value === '%' && isNaN(inputArr[index - 1])) {
-			return 'invalid entry';
+		//add * before open bracket
+		if (CURRENT_CHAR === '(' && (_isAlphaNumeric(PREV_CHAR) || PREV_CHAR === ')') && PREV_CHAR !== undefined) { //undefined evaluates as alphanumeric in regex
+			INPUT_ARR.splice(index, 0, '*');
+		}
+
+		//add * after closing bracket
+		if (CURRENT_CHAR === ')' && _isAlphaNumeric(NEXT_CHAR) && NEXT_CHAR !== undefined) {
+			INPUT_ARR.splice(index + 1, 0, '*');
 		}
 	}
 
 	//#grouper
 	//groups numeric values together
-	for (let i = 0; i <= inputArr.length - 1; ) {
-		if (inputArr[0] === '.' && !isNaN(inputArr[1])) {
-			inputArr.splice(i, 2, `0${inputArr[i] + inputArr[i + 1]}`);
-		} else if ((isOperator(inputArr[i]) || ['(', ')'].includes(inputArr[i])) && inputArr[i + 1] === '.') {
-			inputArr.splice(i + 1, 1, `0.`);
-		} else if (inputArr[i + 1] === '.' && !inputArr[i].includes('.')) {
-			inputArr.splice(i, 2, inputArr[i] + inputArr[i + 1]);
-		} else if (['+', '-'].includes(inputArr[i]) && ['('].includes(inputArr[i - 1]) && !isNaN(inputArr[i + 1])) {
-			inputArr.splice(i, 2, inputArr[i] + inputArr[i + 1]);
-		} else if (['+', '-'].includes(inputArr[0]) && !isNaN(inputArr[1])) {
-			inputArr.splice(i, 2, inputArr[0] + inputArr[1]);
-		} else if (!isNaN(inputArr[i]) && !isNaN(inputArr[i + 1])) {
-			inputArr.splice(i, 2, inputArr[i] + inputArr[i + 1]);
-		} else if (inputArr[i] === '(' && inputArr[i + 1] === ')') {
-			inputArr.length === 2
-				? inputArr.splice(i, 2, '0')
-				: inputArr.splice(i, 2); //! empty bracket logic
+	groupedInputArr = INPUT_ARR.reduce(function (groupedInputArr, character, index) {
+		const LAST_INDEX = groupedInputArr.length ? groupedInputArr.length - 1 : 0;
+		const LAST_CHAR = groupedInputArr[LAST_INDEX]; //if there's no previous character, that means we only have one element in the array
+
+		if (isNaN(character) && character !== '.') {
+			groupedInputArr.push(character);
+		} else if (!isNaN(LAST_CHAR)) {
+			groupedInputArr[LAST_INDEX] = LAST_CHAR + character; 
 		} else {
-			i++;
+			groupedInputArr.push(character);
 		}
-	}
 
-	//checks if parentheses is preceded by a number of operator. 
-	//if it's alphanumeric, it inserts a '*' at beginning of the problem inside the parentheses so the solution inside the parentheses gets multiplied to the number outside before solving the rest of the problem
-	if (input.includes('(')) {
-		for (const [index, value] of inputArr.entries()) {
-			//add * before open bracket
-			if (value === '(' && (/\w/.test(inputArr[index - 1]) || inputArr[index - 1] === ')') && inputArr[index - 1] !== undefined) {
-				inputArr.splice(index, 0, '*');
-			}
+		return groupedInputArr;
+	}, []);
 
-			//add * after closing bracket
-			if (value === ')' && /\w/.test(inputArr[index + 1]) && inputArr[index + 1] !== undefined) {
-				inputArr.splice(index + 1, 0, '*');
-			}
-		}
-	}
+	//evaluate groupedInputArr and convert to postfix
+	for (let idx = 0; idx <= groupedInputArr.length - 1; ) {
+		let element = groupedInputArr[idx];
 
-	//evaluate inputArr and convert to postfix
-	for (let idx = 0; idx <= inputArr.length - 1; ) {
-		let element = inputArr[idx];
-
-		if (!isNaN(element) && inputArr[idx + 1] === '%') {
-			!isNaN(inputArr[idx + 2]) ? inputArr.splice(idx, 3, `${(Number(inputArr[idx]) / 100) * Number(inputArr[idx + 2])}`) : inputArr.splice(idx, 2, `${Number(inputArr[idx]) / 100} `);
-			result += inputArr[idx];
-		} else if (/\w/.test(element)) {
+		if (!isNaN(element) && groupedInputArr[idx + 1] === '%') {
+			!isNaN(groupedInputArr[idx + 2]) ? groupedInputArr.splice(idx, 3, `${(Number(groupedInputArr[idx]) / 100) * Number(groupedInputArr[idx + 2])}`) : groupedInputArr.splice(idx, 2, `${Number(groupedInputArr[idx]) / 100} `);
+			result += INPUT_ARR[idx];
+		} else if (_isAlphaNumeric(element)) {
 			result += `${element} `;
 		} else if (element === '(') {
-			stack.push(element);
+			STACK.push(element);
 		} else if (element === ')') {
-			//if element is closing parentheses, empty stack until open parantheses has been found
-			while (topOfStack() !== '(') {
-				result += `${stack.pop()} `;
+			//if element is closing parentheses, empty STACK until open parantheses has been found
+			while (STACK_HEAD() !== '(') {
+				result += `${STACK.pop()} `;
 			}
-			stack.pop();
+
+			STACK.pop();
 		} else {
-			//if element is an operator, compare precedence with top of stack
-			if (getPrecedence(element) <= getPrecedence(topOfStack())) {
-				result += `${stack.pop()} `;
+			//if element is an operator, compare precedence with top of STACK
+			if (getPrecedence(element) <= getPrecedence(STACK_HEAD())) {
+				result += `${STACK.pop()} `;
 			}
-			stack.push(element);
+			STACK.push(element); //
 		}
 		idx++;
 	}
 
-	//push remaining operators in stack to result after each element has been evaluated
-	while (stack.length > 0) {
-		result += `${stack.pop()} `;
+	//push remaining operators in STACK to result after each element has been evaluated
+	while (STACK.length > 0) {
+		result += `${STACK.pop()} `;
 	}
 
 	//since each operator and number is followed by a space, last number/operator will contain a space, this cleans that and prepares result for calculation which splits the string by space.
 	return result.trimEnd();
 }; //#end of infixToPostfix function;
+
+function _isAlphaNumeric (char) {
+	return /\w/.test(char);
+}
+
+//get top of STACK or (last element of STACK array)
+function STACK_HEAD () {
+	return STACK[STACK.length - 1];
+};
 
 export default infixToPostfix;

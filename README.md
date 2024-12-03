@@ -10,4 +10,5 @@ History
 
 TODO:
 
--  refactor to class base
+-  refactor to class base?
+-  parentheses breaks it ? returning NaN. Issue is in calcpostfix
