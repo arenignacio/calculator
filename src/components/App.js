@@ -117,7 +117,7 @@ function _cleanUpToArr (problem) {
 
 	
 	//if first character is a negative, add 0 so we can deduct the numbers
-	if (result[0] === '-' || result[0] === '+') {
+	if (isOperator(result[0])) {
 		result.unshift('0');
 	}
 
