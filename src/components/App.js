@@ -99,8 +99,9 @@ function _isValid (INPUT_ARR) {
 		const PREV_CHAR = INPUT_ARR[index - 1];
 		const HAS_MISSING_OPERAND = (isOperator(CURRENT_CHAR) && isOperator(NEXT_CHAR)) 
 			|| (_isSpecialChar(CURRENT_CHAR) && isOperator(PREV_CHAR) && isOperator(NEXT_CHAR)) 
-			|| (CURRENT_CHAR === '%' && isNaN(PREV_CHAR));
-	
+			|| (CURRENT_CHAR === '%' && isNaN(PREV_CHAR))
+			|| INPUT_ARR.length === 0;
+
 		//validate against missing operand
 		if (HAS_MISSING_OPERAND) {
 			return false;
