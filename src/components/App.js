@@ -18,6 +18,7 @@ function App() {
 	const [isProblemHidden, setIsProblemHidden] = useState(true);
 	const [sizeModifier, setSizeModifier] = useState('xxl');
 	const [solution, setSolution] = useState('');
+	const [historyDisplay, setHistoryDisplay] = useState([]);
 
 	const hideProblem = () => {
 		setIsProblemHidden(true);
@@ -31,13 +32,24 @@ function App() {
 
 	//state controller function
 	const solve = (problem) => {
+		const CACHE = _getCache();
+		let solution;
+
+		if (isOperator(problem[0]) || problem[0] === '.') {
+			problem = '0' + problem;
+		}
+		
 		setProblem(problem);
 		setProblemDisplay(problem.replace(/\*/g, 'x'));
 
+		solution = CACHE[problem];
+		if (solution) {
+			setSolution(solution);
+			return;
+		}
+
 		const PROBLEM_ARR = _cleanUpToArr(problem);
 		const IS_VALID = _isValid(PROBLEM_ARR);
-
-		let solution;
 
 		if (IS_VALID) {
 			const PROBLEM_STR = PROBLEM_ARR.join('');
@@ -53,9 +65,6 @@ function App() {
 
 	//initialize states
 	const init = (problem, solution = '') => {
-		setProblem(problem || '');
-		setProblemDisplay(problem ? problem.replace(/\*/g, 'x') : '');
-		setSolution(solution);
 
 		if (!problem) {
 			hideProblem();
@@ -63,8 +72,95 @@ function App() {
 			showProblem();
 		}
 
-		console.log(problem);
+		setProblem(problem || '');
+		setProblemDisplay(problem ? problem.replace(/\*/g, 'x') : '');
+		setSolution(solution);
 	};
+		
+	function _isValid (INPUT_ARR) {
+		for (let index = 0; index < INPUT_ARR.length; index++) {
+			const CURRENT_CHAR = INPUT_ARR[index];
+			const NEXT_CHAR = INPUT_ARR[index + 1];
+			const PREV_CHAR = INPUT_ARR[index - 1];
+			const HAS_MISSING_OPERAND = (isOperator(CURRENT_CHAR) && isOperator(NEXT_CHAR)) 
+				|| (_isSpecialChar(CURRENT_CHAR) && isOperator(PREV_CHAR) && isOperator(NEXT_CHAR)) 
+				|| (CURRENT_CHAR === '%' && isNaN(PREV_CHAR))
+				|| INPUT_ARR.length === 0;
+
+			//validate against missing operand
+			if (HAS_MISSING_OPERAND) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	function _cleanUpToArr (problem) {
+		const CURRENT_CHAR = problem[problem.length - 1];
+		let result = Array.from(problem);
+
+		// if last character is operator, pop because it's incomplete.
+		if (isOperator(CURRENT_CHAR)) {
+			result.pop();
+		}
+
+		// close parentheses if open.
+		if (!isClosed(result)) {
+			result = _closeLooseBracket(result);
+		}
+
+		return result;
+	}
+
+	function _closeLooseBracket (arr) {
+		let newArr = _.cloneDeep(arr);
+		while (!isClosed(newArr)) {
+			newArr.push(')');
+		}
+
+		return newArr;
+	};
+
+	function _addToHistory (data) {
+		const HISTORY = _getHistory();
+		const CACHE = _getCache();
+		const { problem, solution } = data;
+		const isCached = CACHE[problem];
+		
+		if (problem && solution) {
+			if (!isCached) {
+				CACHE[problem] = solution;
+				sessionStorage.setItem('cache', JSON.stringify(CACHE));
+			}
+	
+			HISTORY.unshift({ problem, solution });
+			sessionStorage.setItem('history', JSON.stringify(HISTORY));
+			setHistoryDisplay(HISTORY);
+		}		
+	}
+
+	function _getHistory () {
+		const historyString = sessionStorage.getItem('history');
+		return JSON.parse(historyString) || [];
+	}
+
+	function _getCache () {
+		const cacheSTR = sessionStorage.getItem('cache');
+		return JSON.parse(cacheSTR) || {};
+	}
+
+	function _addToCache (data) {
+		const cache = _getCache();
+		const { problem, solution } = data;
+		
+		cache[problem] = solution;
+		sessionStorage.setItem('cache', JSON.stringify(cache));
+	}
+
+	function _removeHistory (index) {
+		//remove history;
+	}
 
 	return (
 		<div className="">
@@ -85,66 +181,13 @@ function App() {
 					hideProblem={hideProblem}
 					showProblem={showProblem}
 					isProblemHidden={isProblemHidden}
+					addToHistory={_addToHistory}
 				/>
 			</div>
 			<p className="container text-right">&#169;Aren Ignacio</p>
 		</div>
 	);
 }
-
-function _isValid (INPUT_ARR) {
-	for (let index = 0; index < INPUT_ARR.length; index++) {
-		const CURRENT_CHAR = INPUT_ARR[index];
-		const NEXT_CHAR = INPUT_ARR[index + 1];
-		const PREV_CHAR = INPUT_ARR[index - 1];
-		const HAS_MISSING_OPERAND = (isOperator(CURRENT_CHAR) && isOperator(NEXT_CHAR)) 
-			|| (_isSpecialChar(CURRENT_CHAR) && isOperator(PREV_CHAR) && isOperator(NEXT_CHAR)) 
-			|| (CURRENT_CHAR === '%' && isNaN(PREV_CHAR))
-			|| INPUT_ARR.length === 0;
-
-		//validate against missing operand
-		if (HAS_MISSING_OPERAND) {
-			return false;
-		}
-	}
-
-	return true;
-}
-
-function _cleanUpToArr (problem) {
-	const CURRENT_CHAR = problem[problem.length - 1];
-	let result = Array.from(problem);
-
-	
-	//if first character is a negative, add 0 so we can deduct the numbers
-	if (isOperator(result[0])) {
-		result.unshift('0');
-	}
-
-	//if last character is operator, pop because it's incomplete.
-	if (isOperator(CURRENT_CHAR)) {
-		result.pop();
-	}
-
-	// close parentheses if open.
-	if (!isClosed(result)) {
-		result = _closeLooseBracket(result);
-	}
-
-	return result;
-}
-
-
-function _closeLooseBracket (arr) {
-	let newArr = _.cloneDeep(arr);
-	while (!isClosed(newArr)) {
-		newArr.push(')');
-	}
-
-	return newArr;
-};
-
-
 
 
 export default App;

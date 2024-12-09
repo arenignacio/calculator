@@ -20,6 +20,7 @@ const Keypad = ({
 	isProblemHidden,
 	init,
 	hideProblem,
+	addToHistory,
 }) => {
 	//NOTE: addToView now has parameter. older version did not use an argument.
 
@@ -48,6 +49,7 @@ const Keypad = ({
 
 			case '=':
 			case 'Enter':
+				addToHistory({problem, solution});
 				return appInit(0, appSolution);
 
 			case 'mc':
