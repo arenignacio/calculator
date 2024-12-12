@@ -21,13 +21,17 @@ function App() {
 	const [historyDisplay, setHistoryDisplay] = useState([]);
 
 	const hideProblem = () => {
-		setIsProblemHidden(true);
-		setSizeModifier('xxl');
+		const textsize = window.screen.width < 800 ? 'xl' : 'xxl'
+
+		setIsProblemHidden(true);		
+		setSizeModifier(textsize);
 	};
 
 	const showProblem = () => {
+		const textsize = window.screen.width < 800 ? 'l' : 'xl'
+		
 		setIsProblemHidden(false);
-		setSizeModifier('xl');
+		setSizeModifier(textsize);
 	};
 
 	//state controller function
@@ -160,6 +164,7 @@ function App() {
 
 	function _removeHistory (index) {
 		//remove history;
+
 	}
 
 	return (
